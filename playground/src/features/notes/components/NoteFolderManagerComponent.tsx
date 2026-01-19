@@ -52,8 +52,17 @@ export default function NoteFolderManagerComponent() {
         {/* Main content */}
         <main className="content">
             <div className="content-header">
-                <div><h2>{activeFile ?? "Select a file"}</h2></div>
-                <div><Switch checked={isOn} onChange={setIsOn} /></div>
+                <div style={{color: "#bfc3cf"}}>
+                    <h2>{activeFile ?? "Select a file"}</h2>
+                    {activeFile 
+                        ? `Character Count: ${text.length}, Word Count: ${text.trim() === "" ? 0 : text.trim().split(/\s+/).length}` 
+                        : "No file has been selected!"
+                    }
+                </div>
+                <div>
+                    <Switch checked={isOn} onChange={setIsOn} />
+                    <button disabled={!activeFile || !isOn} style={{color: "#bfc3cf"}} >Save</button>
+                </div>
             </div>
             <textarea
                 value={text}

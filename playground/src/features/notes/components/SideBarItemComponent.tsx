@@ -16,8 +16,8 @@ export function SidebarItem({ item, onSelect, level = 0 }: SidebarItemProps) {
         <div
             className="sidebar-item"
             onClick={() => {
-            if (isFolder) setOpen(!open);
-            else onSelect(item);
+                if (isFolder) setOpen(!open);
+                else onSelect(item);
             }}
         >
             {isFolder ? (open ? "📂" : "📁") : "📄"} {item.name}
@@ -25,14 +25,14 @@ export function SidebarItem({ item, onSelect, level = 0 }: SidebarItemProps) {
 
         {isFolder && open && (
             <div>
-            {item.children.map(child => (
-                <SidebarItem
-                    key={child.name}
-                    item={child}
-                    onSelect={onSelect}
-                    level={level + 1}
-                />
-            ))}
+                {item.children.map(child => (
+                    <SidebarItem
+                        key={child.name}
+                        item={child}
+                        onSelect={onSelect}
+                        level={level + 1}
+                    />
+                ))}
             </div>
         )}
     </div>;

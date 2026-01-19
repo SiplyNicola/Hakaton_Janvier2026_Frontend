@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;700&display=swap');
 
 /* Row = only layout, no fixed size here */
 .switch-row {
@@ -11,6 +12,7 @@
 /* Prevent the text from wrapping under the switch in tight spaces */
 .switch-label {
   white-space: nowrap;
+  font-family: "Creepster", system-ui;
   line-height: 1.2;
   color: #bfc3cf;            /* adjust to your palette */
   font-size: 0.9rem;         /* optional */
@@ -46,7 +48,7 @@
 .switch > .slider {
   position: absolute;
   inset: 0;
-  background-color: #b8bcc6;
+  background-color: #4d006b;  /* b8bcc6 */
   border-radius: var(--switch-h);
   transition: background-color 180ms ease;
 }
@@ -68,7 +70,7 @@
 
 /* Checked state */
 .switch > input:checked + .slider {
-  background-color: #4caf50;
+  background-color: #ffc400; /* 4caf50 */
 }
 .switch > input:checked + .slider::before {
   transform: translate(calc(var(--switch-w) - var(--knob) - 6px), -50%);
