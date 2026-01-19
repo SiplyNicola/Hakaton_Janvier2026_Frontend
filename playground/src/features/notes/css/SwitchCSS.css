@@ -1,0 +1,81 @@
+
+/* Row = only layout, no fixed size here */
+.switch-row {
+  display: inline-flex;      /* keep items on one line, sized to content */
+  align-items: center;
+  gap: 8px;
+  /* optional click comfort */
+  padding: 2px 0;
+}
+
+/* Prevent the text from wrapping under the switch in tight spaces */
+.switch-label {
+  white-space: nowrap;
+  line-height: 1.2;
+  color: #bfc3cf;            /* adjust to your palette */
+  font-size: 0.9rem;         /* optional */
+}
+
+/* ---- Actual switch (sized here, not on the row) ---- */
+.switch {
+  /* You can tune size here: */
+  --switch-h: 22px;
+  --switch-w: 42px;                       /* 2× height is common */
+  --knob: calc(var(--switch-h) - 6px);
+
+  position: relative;
+  display: inline-block;
+  width: var(--switch-w);
+  height: var(--switch-h);
+  vertical-align: middle;
+}
+
+/* Keep the input full-size for proper hit-area but invisible */
+.switch > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;                 /* make sure clicks hit the input */
+}
+
+/* Track */
+.switch > .slider {
+  position: absolute;
+  inset: 0;
+  background-color: #b8bcc6;
+  border-radius: var(--switch-h);
+  transition: background-color 180ms ease;
+}
+
+/* Knob */
+.switch > .slider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  width: var(--knob);
+  height: var(--knob);
+  transform: translateY(-50%);
+  background-color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+  transition: transform 180ms ease;
+}
+
+/* Checked state */
+.switch > input:checked + .slider {
+  background-color: #4caf50;
+}
+.switch > input:checked + .slider::before {
+  transform: translate(calc(var(--switch-w) - var(--knob) - 6px), -50%);
+}
+
+/* Disabled */
+.switch > input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
