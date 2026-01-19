@@ -1,60 +1,258 @@
+/* index.css */
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@400;700&display=swap');
 
-* {
-  box-sizing: border-box;
-  font-family: sans-serif;
+:root {
+  --color-bg-main: #120a1f; /* Violet très sombre */
+  --color-bg-secondary: #1f1235;
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a8a0b5;
+  --color-accent-orange: #ff6600; /* Citrouille */
+  --color-accent-green: #00ff99; /* Slime toxique */
+  --color-accent-purple: #8a2be2;
+  --color-accent-blood: #cc0000;
+
+  --font-horror: 'Creepster', cursive;
+  --font-body: 'Roboto', sans-serif;
+
+  --sidebar-width: 280px;
 }
 
-.app {
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+  /* Texture de fond subtile */
+  background-image: radial-gradient(circle at 50% 50%, rgba(31, 18, 53, 0.8) 0%, rgba(18, 10, 31, 1) 100%);
+}
+
+/* --- Animations --- */
+
+/* Effet de scintillement pour les titres */
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 0 0 4px #ff6600, 0 0 10px #ff6600, 0 0 20px #ff6600;
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.6;
+  }
+}
+
+/* Effet de bordure "slime" qui coule */
+@keyframes slimeDrip {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Effet de flottement fantomatique */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+/* --- Styles Généraux --- */
+
+h1, h2, h3 {
+  font-family: var(--font-horror);
+  color: var(--color-accent-orange);
+  letter-spacing: 2px;
+}
+
+h1.spooky-title {
+  animation: flicker 3s infinite alternate;
+  font-size: 3rem;
+  text-align: center;
+}
+
+a {
+  color: var(--color-accent-green);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: var(--color-accent-orange);
+  text-shadow: 0 0 5px var(--color-accent-orange);
+}
+
+/* --- Formulaires Spooky --- */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.spooky-form-box {
+  background: rgba(31, 18, 53, 0.9);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255, 102, 0, 0.3), inset 0 0 20px rgba(138, 43, 226, 0.2);
+  border: 2px solid var(--color-accent-purple);
+  width: 100%;
+  max-width: 400px;
+  animation: float 6s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bordure slime animée en haut du formulaire */
+.spooky-form-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(to bottom, var(--color-accent-green), transparent);
+  box-shadow: 0 0 10px var(--color-accent-green);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.spooky-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-accent-purple);
+  color: var(--color-text-primary);
+  border-radius: 5px;
+  font-family: var(--font-body);
+  transition: all 0.3s ease;
+}
+
+.spooky-input:focus {
+  outline: none;
+  border-color: var(--color-accent-orange);
+  box-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+}
+
+/* Boutons */
+.spooky-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(45deg, var(--color-accent-purple), var(--color-bg-secondary));
+  border: none;
+  color: var(--color-accent-orange);
+  font-family: var(--font-horror);
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s;
+  border: 2px solid var(--color-accent-purple);
+}
+
+.spooky-btn:hover {
+  background: var(--color-accent-orange);
+  color: var(--color-bg-main);
+  box-shadow: 0 0 20px var(--color-accent-orange);
+  border-color: var(--color-accent-orange);
+}
+
+/* --- Layout Dashboard --- */
+.dashboard-layout {
   display: flex;
   height: 100vh;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: #1e1e1e;
-  color: white;
-  padding: 16px;
+.sidebar-container {
+  width: var(--sidebar-width);
+  background-color: var(--color-bg-secondary);
+  border-right: 2px solid var(--color-accent-purple);
+  overflow-y: auto;
+  padding: 20px;
+  box-shadow: 5px 0 15px rgba(0,0,0,0.5);
 }
 
-.sidebar h3 {
-  margin-top: 0;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-.sidebar li {
-  padding: 10px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.sidebar li:hover {
-  background: #333;
-}
-
-.sidebar li.active {
-  background: #007acc;
-}
-
-/* Main area */
-.content {
+.main-content {
   flex: 1;
-  padding: 16px;
+  padding: 30px;
+  overflow-y: auto;
+  background-image: 
+    radial-gradient(circle at top right, rgba(138, 43, 226, 0.1), transparent 40%),
+    radial-gradient(circle at bottom left, rgba(255, 102, 0, 0.05), transparent 40%);
+}
+
+/* --- Arbre des dossiers (Sidebar) --- */
+.tree-item {
+  padding: 5px 0;
+}
+.tree-item-header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 5px;
+  transition: background 0.2s;
+  color: var(--color-text-secondary);
+}
+.tree-item-header:hover {
+  background: rgba(255, 102, 0, 0.1);
+  color: var(--color-accent-orange);
+}
+.tree-item-header.is-note {
+   color: var(--color-accent-green);
+}
+.tree-icon { margin-right: 10px; }
+.tree-children { margin-left: 20px; border-left: 1px dashed var(--color-accent-purple); padding-left: 5px;}
+
+/* --- Éditeur de Note --- */
+.note-editor-container {
+    background: rgba(31, 18, 53, 0.8);
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid var(--color-accent-purple);
+    height: 90%;
+    display: flex;
+    flex-direction: column;
 }
 
-.content h2 {
-  margin-top: 0;
+.note-title-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--color-accent-orange);
+    font-family: var(--font-horror);
+    font-size: 2.5rem;
+    color: var(--color-accent-orange);
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
 }
+.note-title-input:focus { outline: none; border-color: var(--color-accent-green); }
 
-textarea {
-  flex: 1;
-  resize: none;
-  padding: 12px;
-  font-size: 16px;
+.note-content-textarea {
+    flex: 1;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--color-accent-purple);
+    color: var(--color-text-primary);
+    padding: 20px;
+    font-family: 'Courier New', monospace; /* Police style machine à écrire pour le contenu */
+    font-size: 1.1rem;
+    resize: none;
+    border-radius: 5px;
+}
+.note-content-textarea:focus { outline: none; box-shadow: 0 0 10px rgba(138, 43, 226, 0.3); }
+
+.metadata-bar {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 5px;
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    border-top: 2px solid var(--color-accent-blood);
+}
+.meta-item span {
+    color: var(--color-accent-orange);
+    font-weight: bold;
+    font-family: var(--font-horror);
 }
