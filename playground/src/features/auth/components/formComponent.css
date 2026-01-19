@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;700&display=swap');
+
+* {
+    background-color: #232129;
+}
+.mainPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #232129;
+    padding: 20px;
+}
+
+.mainPage h2 {
+    font-family: "Creepster", system-ui;
+    font-size: 3.5rem;
+    color: #ff8906;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+
+.formStyle {
+    background-color: #232129;
+    padding: 40px;
+    border-radius: 8px;
+    border: 2px solid #ff8906;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+
+label {
+    display: flex;
+    flex-direction: column;
+    font-family: "Creepster", system-ui;
+    font-size: 1.5rem;
+    color: #a7a9be;
+    letter-spacing: 1px;
+}
+
+input {
+    margin-top: 8px;
+    padding: 12px;
+    border-radius: 4px;
+    background-color: #0f0e17;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+}
+
+button[type="submit"] {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #ff8906;
+    color: #0f0e17;
+    font-family: "Creepster", system-ui;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 4px;
+    transition: transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    transform: scale(1.02);
+}
