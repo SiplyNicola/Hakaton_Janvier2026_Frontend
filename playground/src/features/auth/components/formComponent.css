@@ -12,7 +12,7 @@
 }
 
 .mainPage h2 {
-    font-family: "Creepster", system-ui;
+    font-family: "Creepster";
     font-size: 3.5rem;
     color: #ff8906;
     margin-bottom: 30px;
@@ -36,7 +36,7 @@
 label {
     display: flex;
     flex-direction: column;
-    font-family: "Creepster", system-ui;
+    font-family: "Creepster";
     font-size: 1.5rem;
     color: #a7a9be;
     letter-spacing: 1px;
@@ -66,4 +66,31 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     transform: scale(1.02);
+}
+
+.textParagraph {
+    margin-top: 25px;
+    color: #a7a9be;
+    font-size: 1rem;
+    text-align: center;
+
+}
+
+.linkBtn {
+    background: none;
+    border: none;
+    color: #ff8906;
+    font-family: 'Creepster';
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-left: 5px;
+    padding: 0 5px;
+    transition: 0.3s ease;
+}
+
+.linkBtn:hover {
+    color: #e0e070;
+    text-shadow: 0 0 8px #ff8906;
+    text-decoration: none;
 }
