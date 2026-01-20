@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import MDEditor from "@uiw/react-md-editor";
-
 import "./editor.css";
 
 export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }) {
@@ -41,15 +40,16 @@ export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }
                     <MDEditor
                         value={content}
                         onChange={(v) => setContent(v ?? "")}
-                        height={500}
+                        height={390}
                         preview="edit"    
                         visibleDragbar={false}
                 />
-          </div>
-
+            </div>
                 ) : (
                     <div className="markdown-render">
-                        <MDEditor.Markdown source={content} />
+                        <MDEditor.Markdown 
+                        source={content}
+                        />
                     </div>
                 )}
             </div>
