@@ -27,6 +27,14 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
                 folder_id: null
             });
             onRefresh();
+        } else {
+            await noteService.create({
+                title: "",
+                content_markdown: "",
+                owner_id: user.id,
+                folder_id: null
+            });
+            onRefresh();
         }
     };
 
