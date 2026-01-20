@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
+import MDEditor from "@uiw/react-md-editor";
+
 import "./editor.css";
 
 export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }) {
@@ -35,16 +36,20 @@ export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }
             </header>
 
             <div className="content-area">
-                {mode === 'write' ? (
-                    <textarea 
-                        className="markdown-input" 
-                        value={content} 
-                        onChange={(e) => setContent(e.target.value)}
-                        placeholder="Write down your horrors"
-                    />
+                {mode === 'write' ? (    
+                    <div className="md-editor-wrapper">
+                    <MDEditor
+                        value={content}
+                        onChange={(v) => setContent(v ?? "")}
+                        height={500}
+                        preview="edit"    
+                        visibleDragbar={false}
+                />
+          </div>
+
                 ) : (
                     <div className="markdown-render">
-                        <ReactMarkdown>{content}</ReactMarkdown>
+                        <MDEditor.Markdown source={content} />
                     </div>
                 )}
             </div>
