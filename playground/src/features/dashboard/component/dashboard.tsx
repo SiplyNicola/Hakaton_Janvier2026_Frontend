@@ -45,9 +45,7 @@ export function Dashboard({ user, onLogout }: any) {
                     />
                 ) : (
                     <div className="empty-state" style={{margin: 'auto', textAlign: 'center'}}>
-                        <h2 className="flicker" style={{fontFamily: 'Creepster', color: 'var(--accent-orange)', fontSize: '3rem'}}>
-                            SELECT A PARCHMENT...
-                        </h2>
+                        <h2 className="flicker">SELECT A PARCHMENT...</h2>
                     </div>
                 )}
             </section>
