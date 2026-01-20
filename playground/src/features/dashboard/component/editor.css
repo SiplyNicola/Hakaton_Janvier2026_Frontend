@@ -1,0 +1,97 @@
+:root {
+    --bg-dark: #0a0a0c;
+    --sidebar-bg: rgba(18, 18, 20, 0.9);
+    --accent-orange: #ff8906;
+    --accent-yellow: #fde047;
+    --spooky-purple: #7f5af0;
+    --blood-red: #cc0000;
+    --text-white: #f8f8f2;
+    --ghost-gray: #a7a9be;
+}
+
+.editor-header {
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--spooky-purple);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.note-title {
+    background: transparent;
+    border: none;
+    color: var(--accent-orange);
+    font-family: 'Creepster', cursive;
+    font-size: 2.8rem;
+    outline: none;
+
+}
+
+.mode-toggle {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+    background: var(--bg-dark);
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--spooky-purple);
+   
+}
+
+.mode-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--ghost-gray);
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 33%;
+}
+
+.mode-toggle button.active {
+    background: var(--spooky-purple);
+    color: white;
+}
+
+.save-btn {
+    background: var(--accent-orange);
+    color: #000;
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    transition: 0.3s;
+
+}
+
+.save-btn:hover {
+    transform: scale(1.02);
+    color: var(--accent-orange);
+    box-shadow:0 0 15px var(--accent-orange) ;
+}
+
+.content-area {
+   padding: 20px;
+
+}
+.markdown-input {
+    width: 95%;
+    height: 200%;
+    padding: 50px;
+    background: transparent;
+    border: none;
+    color: #f8f8f2;
+    font-size: 1.5rem;
+    resize: none;
+    outline: none;
+}
+
+
+.metadata-bar {
+    color: #fcf8f8;
+    padding: 10px 40px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    
+}

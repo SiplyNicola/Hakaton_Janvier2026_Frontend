@@ -1,9 +1,6 @@
-/* dashboard.css */
-@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;700&family=Shadows+Into+Light&display=swap');
-
 :root {
     --bg-dark: #0a0a0c;
-    --sidebar-bg: rgba(18, 18, 20, 0.9); /* Effet de verre sombre */
+    --sidebar-bg: rgba(18, 18, 20, 0.9);
     --accent-orange: #ff8906;
     --accent-yellow: #fde047;
     --spooky-purple: #7f5af0;
@@ -12,11 +9,9 @@
     --ghost-gray: #a7a9be;
 }
 
-/* --- Base & Animations --- */
-* { box-sizing: border-box; }
 
 .dashboard-container {
-    display: flex; /* Aligne Sidebar à gauche et Editor à droite */
+    display: flex;
     height: 100vh;
     width: 100vw;
     background-color: var(--bg-dark);
@@ -26,232 +21,18 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* --- 🦇 Chauves-souris (Arrière-plan) --- */
-.bat-animated {
-    position: absolute;
-    width: 120px;
-    pointer-events: none; /* Empêche l'image de bloquer les clics */
-    z-index: 1; /* Derrière l'interface utilisateur */
-    filter: drop-shadow(0 0 10px rgba(127, 90, 240, 0.4));
-    animation: fly-bat 15s linear infinite;
-    opacity: 0.7;
-}
-
-@keyframes fly-bat {
-    0% { left: -150px; top: 20%; transform: rotate(10deg) scale(0.8); }
-    50% { top: 50%; transform: rotate(-10deg) scale(1.1); }
-    100% { left: 110vw; top: 20%; transform: rotate(15deg) scale(0.8); }
-}
-
-.bat-delay-1 { animation-delay: 5s; animation-duration: 20s; }
-.bat-delay-2 { animation-delay: 10s; top: 60% !important; animation-duration: 12s; }
-
-/* --- 🎃 Citrouilles --- */
-.pumpkin {
-    position: fixed;
-    width: 120px;
-    bottom: 60px;
-    right: 40px;
-    z-index: 5;
-    filter: drop-shadow(0 0 15px var(--accent-orange));
-    animation: pumpkin-float 4s ease-in-out infinite alternate;
-}
-
-@keyframes pumpkin-float {
-    from { transform: translateY(0) rotate(-2deg); }
-    to { transform: translateY(-20px) rotate(2deg); }
-}
-
-/* --- Sidebar (Grimoire) --- */
-.sidebar {
-    width: 320px;
-    background: var(--sidebar-bg);
-    backdrop-filter: blur(10px); /* Effet de flou derrière la barre */
-    border-right: 2px solid var(--spooky-purple);
-    z-index: 20; /* Devant les chauves-souris */
-    padding: 25px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 10px 0 30px rgba(0,0,0,0.8);
-}
-
-.sidebar h3 {
-    font-family: 'Creepster', cursive;
-    color: var(--accent-orange);
-    font-size: 2.2rem;
-    text-align: center;
-    margin-bottom: 30px;
-    text-shadow: 2px 2px 0px #000;
-}
-
-.quick-actions {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.quick-actions button {
-    flex: 1;
-    background: rgba(127, 90, 240, 0.2);
-    border: 1px solid var(--spooky-purple);
-    color: var(--text-white);
-    padding: 10px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.quick-actions button:hover {
-    background: var(--spooky-purple);
-    box-shadow: 0 0 15px var(--spooky-purple);
-}
-
-/* --- Arborescence --- */
-.tree-navigation { flex: 1; overflow-y: auto; }
-
-.tree-item-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    margin: 4px 0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.tree-item-row:hover { background: rgba(255, 137, 6, 0.1); }
-
-.item-actions { display: none; gap: 8px; }
-.tree-item-row:hover .item-actions { display: flex; }
-
-.folder-content { margin-left: 20px; border-left: 1px dashed var(--spooky-purple); }
-
-/* --- Éditeur de Parchemins --- */
 .editor-section {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: rgba(10, 10, 12, 0.6); /* Transparence pour voir les chauves-souris */
-    backdrop-filter: blur(4px);
     z-index: 10;
 }
 
-.editor-header {
-    padding: 20px 40px;
-    border-bottom: 1px solid var(--spooky-purple);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(0,0,0,0.4);
-}
 
-.note-title {
-    background: transparent;
-    border: none;
-    color: var(--accent-orange);
-    font-family: 'Creepster', cursive;
-    font-size: 2.8rem;
-    outline: none;
-    width: 60%;
-}
-
-.mode-toggle {
-    display: flex;
-    gap: 10px;
-    background: #16161a;
-    padding: 5px;
-    border-radius: 10px;
-    border: 1px solid var(--spooky-purple);
-}
-
-.mode-toggle button {
-    background: transparent;
-    border: none;
-    color: var(--ghost-gray);
-    padding: 8px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.mode-toggle button.active {
-    background: var(--spooky-purple);
-    color: white;
-}
-
-.save-btn {
-    background: var(--accent-orange);
-    color: #000;
-    font-family: 'Creepster', cursive;
-    font-size: 1.5rem;
-    padding: 10px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-left: 20px;
-    transition: 0.3s;
-}
-
-.save-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px var(--accent-orange);
-}
-
-/* --- Zone d'écriture Markdown --- */
-.content-area { flex: 1; padding: 40px; overflow-y: auto; }
-
-.markdown-input {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    color: #f8f8f2;
-    font-family: 'Shadows Into Light', cursive; /* Style manuscrit */
-    font-size: 1.5rem;
-    line-height: 1.6;
-    resize: none;
-    outline: none;
-}
-
-.markdown-render { line-height: 1.7; font-size: 1.2rem; }
-.markdown-render h1, .markdown-render h2 { font-family: 'Creepster'; color: var(--accent-orange); }
-
-/* --- Pied de page (Palier Zombie) --- */
-.metadata-bar {
-    background: linear-gradient(to right, var(--accent-orange), #e67e22);
-    color: #000;
-    padding: 10px 40px;
+.empty-state {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    font-weight: bold;
-    font-size: 1rem;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
-    z-index: 100;
+    align-items: center;
 }
 
-/* --- Divers --- */
-.empty-state { flex: 1; display: flex; justify-content: center; align-items: center; }
 
-@keyframes flicker {
-    0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--accent-orange); }
-    50% { opacity: 0.7; }
-}
-
-.flicker { animation: flicker 3s infinite; }
-
-.logout-btn {
-    background: var(--blood-red);
-    color: white;
-    font-family: 'Creepster';
-    padding: 10px;
-    margin-top: auto;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* Scrollbar Style Slime */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: var(--spooky-purple); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }

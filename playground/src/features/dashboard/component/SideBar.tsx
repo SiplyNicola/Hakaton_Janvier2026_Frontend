@@ -1,12 +1,13 @@
 import { folderService } from '../../../services/folder-service';
 import { noteService } from '../../../services/note-service';
 import TreeItem from './TreeItem';
+import "./SideBar.css";
 
 
 export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) {
     
     const addRootFolder = async () => {
-        const name = prompt("Nom du nouveau grimoire (dossier) :");
+        const name = prompt("Name of the new grimoire (folder):");
         if (name) {
             await folderService.create(name, user.id);
             onRefresh();
@@ -14,7 +15,7 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
     };
 
     const addRootNote = async () => {
-        const title = prompt("Titre du nouveau parchemin (note) :");
+        const title = prompt("Title of the new parchment (note) :");
         if (title) {
             await noteService.create({
                 title,
@@ -29,10 +30,10 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
-                <h3>Grimoire de {user.username}</h3>
+                <h3>Grimoir {user.username}</h3>
                 <div className="quick-actions">
-                    <button title="Nouveau dossier" onClick={addRootFolder}>📁+</button>
-                    <button title="Nouveau parchemin" onClick={addRootNote}>📜+</button>
+                    <button title="New folder" onClick={addRootFolder}>📁+</button>
+                    <button title="New note" onClick={addRootNote}>📜+</button>
                 </div>
             </div>
             
@@ -58,7 +59,7 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
                 ))}
             </nav>
 
-            <button className="logout-btn" onClick={onLogout}>S'enfuir</button>
+            <button className="logout-btn" onClick={onLogout}>Log out </button>
         </aside>
     );
 }

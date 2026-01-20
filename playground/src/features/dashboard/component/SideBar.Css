@@ -1,0 +1,63 @@
+:root {
+    --bg-dark: #0a0a0c;
+    --sidebar-bg: rgba(18, 18, 20, 0.9);
+    --accent-orange: #ff8906;
+    --accent-yellow: #fde047;
+    --spooky-purple: #7f5af0;
+    --blood-red: #cc0000;
+    --text-white: #f8f8f2;
+    --ghost-gray: #a7a9be;
+    
+}
+.sidebar {
+    width: 320px;
+    z-index: 20;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
+}
+
+.sidebar h3 {
+    font-family: 'Creepster', cursive;
+    color: var(--accent-orange);
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 30px;
+
+}
+
+.quick-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.quick-actions button {
+    flex: 1;
+    color: var(--text-white);
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.quick-actions button:hover {
+    background: var(--spooky-purple);
+    box-shadow: 0 0 15px var(--spooky-purple);
+}
+
+.tree-navigation {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.logout-btn {
+    background: var(--blood-red);
+    color: white;
+    font-family: 'Creepster';
+    padding: 10px;
+    margin-top: auto;
+    border-radius: 8px;
+    cursor: pointer;
+}

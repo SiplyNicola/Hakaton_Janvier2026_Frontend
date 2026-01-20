@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { noteService } from '../../../services/note-service';
 import { folderService } from '../../../services/folder-service';
+import "./TreeItem.css";
 
 
 export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: any) {
@@ -8,7 +9,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm(`Voulez-vous vraiment détruire ce ${type === 'note' ? 'parchemin' : 'dossier'} ?`)) return;
+        if (!confirm(`Do you want to delete this ${type === 'note' ? 'parchment' : 'folder'} ?`)) return;
         
         if (type === "note") await noteService.delete(item.id);
         else await folderService.delete(item.id);
@@ -17,7 +18,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleRename = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        const newName = prompt("Nouveau nom :", item.title || item.name);
+        const newName = prompt("New name :", item.title || item.name);
         if (!newName) return;
 
         if (type === "note") {
@@ -30,7 +31,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
-        const name = prompt(`Nom du ${subType === 'note' ? 'parchemin' : 'dossier'} :`);
+        const name = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'folder'} :`);
         if (!name) return;
 
         if (subType === 'note') {

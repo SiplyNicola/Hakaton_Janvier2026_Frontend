@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import "./editor.css";
 
 export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }) {
     const [mode, setMode] = useState<'write' | 'read'>('write');
@@ -39,7 +40,7 @@ export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }
                         className="markdown-input" 
                         value={content} 
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder="Inscrivez vos horreurs..."
+                        placeholder="Write down your horrors"
                     />
                 ) : (
                     <div className="markdown-render">
@@ -49,10 +50,10 @@ export function Editor({ note, onSave }: { note: any, onSave: (n: any) => void }
             </div>
 
             <footer className="metadata-bar">
-                <span>Lignes: {meta.lines}</span>
-                <span>Mots: {meta.words}</span>
-                <span>Caractères: {meta.chars}</span>
-                <span>Taille: {meta.size} octets</span>
+                <span>Lines: {meta.lines}</span>
+                <span>Words: {meta.words}</span>
+                <span>Charaters: {meta.chars}</span>
+                <span>size: {meta.size} Byte</span>
             </footer>
         </div>
     );
