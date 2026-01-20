@@ -10,6 +10,9 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
         if (name) {
             await folderService.create(name, user.id);
             onRefresh();
+        } else { 
+            await folderService.create("", user.id);
+            onRefresh();
         }
     };
 
