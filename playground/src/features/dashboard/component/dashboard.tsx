@@ -45,6 +45,7 @@ export function Dashboard({ user, onLogout }: any) {
                     />
                 ) : (
                     <div className="empty-state" style={{margin: 'auto', textAlign: 'center'}}>
+                        <div className="empty-bg" />
                         <h2 className="flicker">SELECT A PARCHMENT...</h2>
                     </div>
                 )}
