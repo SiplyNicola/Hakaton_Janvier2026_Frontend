@@ -9,7 +9,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm(`Do you want to delete this ${type === 'note' ? 'parchment' : 'folder'} ?`)) return;
+        if (!confirm(`Do you want to send this ${type === 'note' ? 'parchment' : 'grimoir'} to the grave?`)) return;
         
         if (type === "note") await noteService.delete(item.id);
         else await folderService.delete(item.id);
@@ -31,7 +31,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
-        const name = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'folder'} :`);
+        const name = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'grimoir'} :`);
         
         if (name !== null) { 
             const titleToUse = name === "" ? "" : name;

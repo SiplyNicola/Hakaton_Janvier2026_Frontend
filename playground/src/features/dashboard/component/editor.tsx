@@ -147,20 +147,20 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
                         onClick={() => handleSwitchMode('write')} 
                         className={mode === 'write' ? 'active' : ''}
                     >
-                        Writing
+                        Unleashed
                     </button>
                     <button 
                         onClick={() => handleSwitchMode('read')} 
                         className={mode === 'read' ? 'active' : ''}
                     >
-                        Reading
+                        Sealed
                     </button>
                     
                     <button 
                         className="save-btn" 
                         onClick={() => onSave({...note, title, content_markdown: markdownContent})}
                     >
-                        Save Note
+                        Commit to Ink
                     </button>
                 </div>
             </header>
@@ -199,7 +199,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
                 <span>Lines: {meta.lines}</span>
                 <span>Words: {meta.words}</span>
                 <span>Characters: {meta.chars}</span>
-                <span>Size: {meta.size} Bytes</span>
+                <span>Size: {meta.size} Byte{meta.size == 1 ? "" : "s"}</span>
             </footer>
         </div>
     );
