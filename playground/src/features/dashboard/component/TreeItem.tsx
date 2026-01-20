@@ -32,30 +32,33 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
         const name = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'folder'} :`);
-        if (name !== null && name !== "") {
+        
+        if (name !== null) { 
+            const titleToUse = name === "" ? "" : name;
+            
             if (subType === 'note') {
-                await noteService.create({ title: name, content_markdown: "", owner_id: user.id, folder_id: item.id });
+                await noteService.create({ title: titleToUse, content_markdown: "", owner_id: user.id, folder_id: item.id });
             } else {
-                await folderService.create(name, user.id, item.id);
-            }
-            setIsOpen(true);
-            onRefresh();
-        } else {
-            if (subType === 'note') {
-                await noteService.create({ title: "", content_markdown: "", owner_id: user.id, folder_id: item.id });
-            } else {
-                await folderService.create("", user.id, item.id);
+                await folderService.create(titleToUse, user.id, item.id);
             }
             setIsOpen(true);
             onRefresh();
         }
-
     };
 
+    // --- RENDER NOTE ---
     if (type === "note") {
         return (
             <div className="tree-item-row note" onClick={() => onSelectNote(item.id)}>
-                <span>📜 {item.title}</span>
+                {/* 1. On sépare l'icône */}
+                <span style={{ marginRight: '5px', backgroundColor: 'transparent' }}>📜</span>
+                
+                {/* 2. On met le titre dans son propre span avec la classe CSS spéciale */}
+                <span className="tree-item-title" title={item.title}>
+                    {item.title || "Untitled Note"}
+                </span>
+
+                {/* Les boutons sont maintenant en position: absolute grâce au CSS */}
                 <div className="item-actions">
                     <button onClick={handleRename}>✏️</button>
                     <button onClick={handleDelete}>🗑️</button>
@@ -64,10 +67,18 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
         );
     }
 
+    // --- RENDER FOLDER ---
     return (
         <div className="tree-folder">
             <div className="tree-item-row folder" onClick={() => setIsOpen(!isOpen)}>
-                <span>{isOpen ? '📂' : '📁'} {item.name}</span>
+                {/* 1. On sépare l'icône */}
+                <span style={{ marginRight: '5px', backgroundColor: 'transparent' }}>{isOpen ? '📂' : '📁'}</span>
+                
+                {/* 2. On met le nom dans son propre span avec la classe CSS spéciale */}
+                <span className="tree-item-title" title={item.name}>
+                    {item.name || "Untitled Folder"}
+                </span>
+
                 <div className="item-actions">
                     <button onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
                     <button onClick={(e) => handleAddSubItem(e, 'note')}>📜+</button>

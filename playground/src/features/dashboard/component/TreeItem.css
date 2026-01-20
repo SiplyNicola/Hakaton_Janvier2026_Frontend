@@ -2,35 +2,64 @@
     --bg-dark: #0a0a0c;
     --sidebar-bg: rgba(18, 18, 20, 0.9);
     --accent-orange: #ff8906;
-    --accent-yellow: #fde047;
     --spooky-purple: #7f5af0;
     --blood-red: #cc0000;
     --text-white: #f8f8f2;
-    --ghost-gray: #a7a9be;
 }
 
 .tree-item-row {
+    position: relative; 
+    
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; 
     align-items: center;
     padding: 10px;
     margin: 4px 0;
     border-radius: 8px;
     cursor: pointer;
     transition: 0.2s;
+    
+    overflow: hidden; 
+    z-index: 1;
+    
 }
 
 .tree-item-row:hover {
     background: rgba(255, 137, 6, 0.1);
 }
 
+.tree-item-title {
+    flex: 1;               
+    white-space: nowrap;    
+    overflow: hidden;      
+    text-overflow: ellipsis;
+    margin-right: 10px;     
+    background-color: transparent !important;
+    position: relative; 
+    z-index: 2;
+}
+
 .item-actions {
-    display: none;
+    position: absolute;
+    right: 0;              
+    top: 0;
+    bottom: 0;            
+    
+    display: flex;
+    align-items: center;
     gap: 8px;
+    padding-right: 10px;  
+    padding-left: 10px;    
+    
+    background: linear-gradient(to right, transparent, var(--bg-dark) 40%);
+    
+    opacity: 0;            
+    transition: opacity 0.2s ease-in-out;
+    z-index: 10;
 }
 
 .tree-item-row:hover .item-actions {
-    display: flex;
+    opacity: 1;
 }
 
 .folder-content {
