@@ -18,10 +18,25 @@ export function Dashboard({ user, onLogout }: any) {
     useEffect(() => { refreshSidebar(); }, [user.id]);
 
     const handleSelectNote = async (id: number) => {
+        try {
+            const newPath = `/note/${id}`;
+            if (window.location.pathname !== newPath) window.history.pushState({}, '', newPath);
+        } catch (e) {
+   
+        }
         const note = await noteService.getById(id);
         setSelectedNote(note);
         setTrashSection(false);
     };
+
+    // On mount: if URL contains /note/:id, open that note
+    useEffect(() => {
+        const match = window.location.pathname.match(/\/note\/(\d+)/);
+        if (match) {
+            const id = Number(match[1]);
+            if (!isNaN(id)) handleSelectNote(id);
+        }
+    }, []);
 
     const handleSaveNote = async (updatedNote: any) => {
         const savedNote = await noteService.update(updatedNote.id, updatedNote);
@@ -53,6 +68,7 @@ export function Dashboard({ user, onLogout }: any) {
                         key={selectedNote.id} 
                         note={selectedNote} 
                         onSave={handleSaveNote} 
+                        onOpenNoteById={handleSelectNote}
                     />
                 ) :
                 isTrashSection ? (
