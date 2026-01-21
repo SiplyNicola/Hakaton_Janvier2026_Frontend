@@ -6,6 +6,7 @@ import "./dashboard.css";
 import TrashItem from "./TrashItem";
 
 export function Dashboard({ user, onLogout }: any) {
+    const [trashData, setTrashData] = useState<any>(null);
     const [sidebarData, setSidebarData] = useState<any>(null);
     const [selectedNote, setSelectedNote] = useState<any>(null);
     const [isTrashSection, setTrashSection] = useState(false);
@@ -14,8 +15,12 @@ export function Dashboard({ user, onLogout }: any) {
         const data = await noteService.getSidebar(user.id);
         setSidebarData(data);
     };
-
-    useEffect(() => { refreshSidebar(); }, [user.id]);
+    const refreshTrash = async () => {
+        const data = await noteService.getTrash(user.id);
+        setTrashData(data);
+        console.log("Trash data:", data);
+    };
+    useEffect(() => { refreshSidebar(); refreshTrash(); }, [user.id]);
 
     const handleSelectNote = async (id: number) => {
         try {
@@ -72,7 +77,13 @@ export function Dashboard({ user, onLogout }: any) {
                     />
                 ) :
                 isTrashSection ? (
-                    <TrashItem user={user} />
+                    <TrashItem 
+                        user={user} 
+                        trashData={trashData} 
+                        onSelectNote={handleSelectNote} 
+                        onRefreshTrash={refreshTrash} 
+                        onRefreshSidebar={refreshSidebar}
+                    />
                 )
                 : (
                     <div className="empty-state">
