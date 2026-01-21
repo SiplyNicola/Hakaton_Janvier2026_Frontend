@@ -12,11 +12,11 @@ import html2pdf from 'html2pdf.js';
 const internalLinkExtension = {
     type: 'lang',
     regex: /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g,
-    replace: function (match: string, idPart: string, title?: string) {
+    replace: function (idPart: string, title?: string) {
         let id = idPart;
         if (idPart.startsWith('note:')) id = idPart.split(':')[1];
         const display = title || id;
-        return `<a class="internal-note-link" href="/note/${id}" data-note-id="${id}">${display} style="cursor: pointer";</a>`;
+        return `<a class="internal-note-link" href="#" data-note-id="${id} ">${display} style="cursor: pointer";</a>`;
     }
 };
 
@@ -117,6 +117,7 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
 
             if (link) {
                 e.preventDefault();
+                e.stopPropagation();
                 const id = link.getAttribute('data-note-id');
                 if (id && onOpenNoteById) {
                     onOpenNoteById(Number(id)); 
