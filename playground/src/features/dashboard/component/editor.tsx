@@ -8,7 +8,6 @@ import "./editor.css";
 import html2pdf from 'html2pdf.js';
 
 // --- EXTENSION : LIENS INTERNES (WIKILINKS)
-// Supporte : [[123]] ou [[123|Titre]] ou [[note:123|Titre]]
 const internalLinkExtension = {
     type: 'lang',
     regex: /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g,
@@ -25,7 +24,7 @@ const internalLinkExtension = {
 // 1. Showdown (Lecture : Markdown -> HTML)
 const mdToHtmlConverter = new Showdown.Converter({
     strikethrough: true,    
-    simpleLineBreaks: true, // "Enter" crée un saut de ligne <br>
+    simpleLineBreaks: true, 
     openLinksInNewWindow: false,
     extensions: [internalLinkExtension]
 });
@@ -37,10 +36,7 @@ const htmlToMdConverter = new TurndownService({
     emDelimiter: '*'          //  * pour l'italique
 });
 
-
-
 // BARRÉ (Strikethrough)
-// Convertit <s>, <del>, <strike> en ~~texte~~
 htmlToMdConverter.addRule('strikethrough', {
     filter: ['del', 's', 'strike' as any], 
     replacement: function (content) {
@@ -49,7 +45,6 @@ htmlToMdConverter.addRule('strikethrough', {
 });
 
 // SOULIGNÉ (Underline)
-// Force l'utilisation de la balise HTML <u> car le MD standard ne le gère pas
 htmlToMdConverter.addRule('underline', {
     filter: ['u'],
     replacement: function (content) {
@@ -87,6 +82,9 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     
     const [meta, setMeta] = useState({ chars: 0, words: 0, lines: 0, size: 0 });
     const readViewRef = useRef<HTMLDivElement | null>(null);
+    
+    // --- AJOUT : REF pour Quill ---
+    const quillRef = useRef<ReactQuill>(null);
 
 
     // 1. Initialisation du CONTENU (Titre, Markdown, HTML)
@@ -132,14 +130,116 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     }, [mode, htmlContent, onOpenNoteById]);
 
 
+    // --- AJOUT : LOGIQUE REVERSE MARKDOWN (Double Clic) ---
+    const handleDoubleClick = () => {
+        if (mode !== 'write' || !quillRef.current) return;
+
+        const editor = quillRef.current.getEditor();
+        const range = editor.getSelection();
+        if (!range) return;
+
+        // On utilise getLeaf pour trouver le style précis sous le curseur
+        const [leaf] = editor.getLeaf(range.index);
+        if (!leaf || !leaf.parent) return;
+
+        const parentBlot = leaf.parent;
+        const parentTag = parentBlot.domNode.tagName; // STRONG, EM, U, S...
+
+        const transformToMd = (tag: string, formatName: string) => {
+            const blotIndex = editor.getIndex(parentBlot);
+            const blotLength = parentBlot.length();
+            const text = parentBlot.domNode.innerText || parentBlot.domNode.textContent;
+
+            // Si déjà en markdown, on arrête
+            if (text.startsWith(tag) && text.endsWith(tag)) return;
+
+            editor.formatText(blotIndex, blotLength, formatName, false);
+            editor.insertText(blotIndex + blotLength, tag);
+            editor.insertText(blotIndex, tag);
+            setTimeout(() => editor.setSelection(blotIndex + tag.length, blotLength), 0);
+        };
+
+        // Détection des balises
+        if (parentTag === 'STRONG' || parentTag === 'B') transformToMd("**", "bold");
+        else if (parentTag === 'EM' || parentTag === 'I') transformToMd("*", "italic");
+        else if (parentTag === 'S' || parentTag === 'STRIKE') transformToMd("~~", "strike");
+        else if (parentTag === 'U') {
+            // Cas spécial souligné (pas de MD standard, on utilise HTML)
+            const blotIndex = editor.getIndex(parentBlot);
+            const blotLength = parentBlot.length();
+            const text = parentBlot.domNode.innerText;
+            if (text.startsWith('<u>')) return;
+            editor.formatText(blotIndex, blotLength, 'underline', false);
+            editor.insertText(blotIndex + blotLength, '</u>');
+            editor.insertText(blotIndex, '<u>');
+            setTimeout(() => editor.setSelection(blotIndex + 3, blotLength), 0);
+        }
+    };
+
+    // --- AJOUT : LOGIQUE LIVE MARKDOWN (Frappe) ---
+    const checkLiveMarkdown = (editor: any) => {
+        const selection = editor.getSelection();
+        if (!selection) return;
+
+        const [leaf] = editor.getLeaf(selection.index - 1);
+        if (!leaf || !leaf.text) return;
+
+        // On vérifie le texte de la ligne courante
+        const [line, offset] = editor.getLine(selection.index);
+        const lineText = line.domNode.innerText;
+        const textUntilCursor = lineText.substring(0, offset);
+
+        // Titres (#, ##)
+        if (textUntilCursor === '# ') {
+            editor.formatLine(selection.index, 1, 'header', 1);
+            editor.deleteText(selection.index - 2, 2);
+            return;
+        }
+        if (textUntilCursor === '## ') {
+            editor.formatLine(selection.index, 1, 'header', 2);
+            editor.deleteText(selection.index - 3, 3);
+            return;
+        }
+
+        // Inline Styles (**bold**, *italic*, etc.)
+        const patterns = [
+            { regex: /\*\*([^*\n]+)\*\* $/, format: 'bold' },
+            { regex: /\*([^*\n]+)\* $/, format: 'italic' },
+            { regex: /~~([^~\n]+)~~ $/, format: 'strike' },
+            { regex: /<u>([^<\n]+)<\/u> $/, format: 'underline' }
+        ];
+
+        const leafText = leaf.text; 
+        for (let p of patterns) {
+            const match = leafText.match(p.regex);
+            if (match) {
+                const fullMatch = match[0];
+                const content = match[1];
+                const leafIndex = editor.getIndex(leaf);
+                const startIndex = leafIndex + (match.index || 0);
+
+                editor.deleteText(startIndex, fullMatch.length);
+                editor.insertText(startIndex, content, { [p.format]: true });
+                editor.insertText(startIndex + content.length, ' ', { [p.format]: false });
+                return;
+            }
+        }
+    };
+
+
     // --- HANDLERS ---
 
     // Quand l'utilisateur tape dans l'éditeur Rich Text
-    const handleEditorChange = (contentHtml: string) => {
+    const handleEditorChange = (contentHtml: string, delta: any, source: string, editor: any) => {
         setHtmlContent(contentHtml);
         // Conversion temps réel HTML -> MD pour la sauvegarde
         const generatedMarkdown = htmlToMdConverter.turndown(contentHtml);
         setMarkdownContent(generatedMarkdown);
+
+        // --- AJOUT : Appel Live Markdown ---
+        if (source === 'user' && quillRef.current) {
+            checkLiveMarkdown(quillRef.current.getEditor());
+        }
     };
 
     const handleSwitchMode = async (newMode: 'write' | 'read') => {
@@ -233,7 +333,7 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     // Configuration Toolbar Quill
     const modules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
+            [{ 'header': [false, 1, 2] }], // Normal, H1, H2
             ['bold', 'italic', 'underline', 'strike'], 
             [{'list': 'ordered'}, {'list': 'bullet'}],
             ['link'],
@@ -284,8 +384,13 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
 
             <div className="content-area">
                 {mode === 'write' ? (
-                    <div className="rich-text-wrapper">
+                    <div 
+                        className="rich-text-wrapper"
+                        // --- AJOUT : Interception du Double Clic sur la DIV ---
+                        onDoubleClick={handleDoubleClick}
+                    >
                         <ReactQuill 
+                            ref={quillRef} // --- AJOUT : REF ---
                             theme="snow"
                             value={htmlContent}
                             onChange={handleEditorChange}
