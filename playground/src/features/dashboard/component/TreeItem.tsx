@@ -31,19 +31,18 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
-        const name = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'grimoir'} :`);
-        
-        if (name !== null) { 
-            const titleToUse = name === "" ? "" : name;
-            
-            if (subType === 'note') {
-                await noteService.create({ title: titleToUse, content_markdown: "", owner_id: user.id, folder_id: item.id });
-            } else {
-                await folderService.create(titleToUse, user.id, item.id);
-            }
-            setIsOpen(true);
-            onRefresh();
+        const raw = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'grimoir'} :`);
+        if (raw === null) return; // cancelled
+        const name = raw.trim();
+        if (!name) return; // empty
+
+        if (subType === 'note') {
+            await noteService.create({ title: name, content_markdown: "", owner_id: user.id, folder_id: item.id });
+        } else {
+            await folderService.create(name, user.id, item.id);
         }
+        setIsOpen(true);
+        onRefresh();
     };
 
     // --- RENDER NOTE ---

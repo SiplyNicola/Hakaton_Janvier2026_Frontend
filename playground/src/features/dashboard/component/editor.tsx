@@ -22,6 +22,8 @@ const htmlToMdConverter = new TurndownService({
     emDelimiter: '*'          //  * pour l'italique
 });
 
+
+
 // BARRÉ (Strikethrough)
 // Convertit <s>, <del>, <strike> en ~~texte~~
 htmlToMdConverter.addRule('strikethrough', {
