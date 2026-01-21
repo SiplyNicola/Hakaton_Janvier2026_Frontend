@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import "./TreeItem.css";
 
 
-export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: any) {
+export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fromTrash }: any) {
     const [isOpen, setIsOpen] = useState(false);
     const [isZipping, setIsZipping] = useState(false);
 
@@ -123,8 +123,17 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
 
                 {/* Les boutons sont maintenant en position: absolute grâce au CSS */}
                 <div className="item-actions">
-                    <button onClick={handleRename}>✏️</button>
-                    <button onClick={handleDelete}>🗑️</button>
+                    { fromTrash ? 
+                        <>
+                            <button title='Revive'>↩️</button>
+                            <button title='Bury'>❌</button>
+                        </>
+                        :  
+                        <>
+                            <button title='Rename' onClick={handleRename}>✏️</button>
+                            <button title='Trash' onClick={handleDelete}>🗑️</button>
+                        </> 
+                    }
                 </div>
             </div>
         );
@@ -143,22 +152,32 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
                 </span>
 
                 <div className="item-actions">
-                    <button onClick={handleExportZip} title="Download ZIP Archive">
-                        {isZipping ? '⏳' : '📦'}
-                    </button>
-                    <button onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
-                    <button onClick={(e) => handleAddSubItem(e, 'note')}>📜+</button>
-                    <button onClick={handleRename}>✏️</button>
-                    <button onClick={handleDelete}>🗑️</button>
+                    { fromTrash ? 
+                        <>
+                            <button title='Revive'>↩️</button>
+                            <button title='Bury'>❌</button>
+                        </>
+                        :  
+                        <>
+                            <button onClick={handleExportZip} title="Download ZIP Archive">
+                                {isZipping ? '⏳' : '📦'}
+                            </button>
+                            <button onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
+                            <button onClick={(e) => handleAddSubItem(e, 'note')}>📜+</button>
+                            <button onClick={handleRename}>✏️</button>
+                            <button onClick={handleDelete}>🗑️</button>
+                        </> 
+                    }
+                    
                 </div>
             </div>
             {isOpen && (
                 <div className="folder-content">
                     {item.subFolders?.map((sf: any) => (
-                        <TreeItem key={`f-${sf.id}`} item={sf} type="folder" onSelectNote={onSelectNote} onRefresh={onRefresh} user={user} />
+                        <TreeItem key={`f-${sf.id}`} item={sf} type="folder" onSelectNote={onSelectNote} onRefresh={onRefresh} user={user} fromTrash={fromTrash} />
                     ))}
                     {item.notes?.map((n: any) => (
-                        <TreeItem key={`n-${n.id}`} item={n} type="note" onSelectNote={onSelectNote} onRefresh={onRefresh} />
+                        <TreeItem key={`n-${n.id}`} item={n} type="note" onSelectNote={onSelectNote} onRefresh={onRefresh} fromTrash={fromTrash} />
                     ))}
                 </div>
             )}

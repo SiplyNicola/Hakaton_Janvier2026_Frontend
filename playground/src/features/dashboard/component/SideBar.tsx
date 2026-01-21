@@ -62,6 +62,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                         onSelectNote={onSelectNote}
                         onRefresh={onRefresh}
                         user={user}
+                        fromTrash={false}
                     />
                 ))}
                 {data?.notes?.map((note: any) => (
@@ -71,6 +72,8 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                         type="note" 
                         onSelectNote={onSelectNote}
                         onRefresh={onRefresh}
+                        user={user}
+                        fromTrash={false}
                     />
                 ))}
             </nav>

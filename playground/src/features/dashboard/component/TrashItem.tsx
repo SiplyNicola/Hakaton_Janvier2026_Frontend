@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { noteService } from "../../../services/note-service";
 import TreeItem from "./TreeItem";
 
-export default function TrashItem({ user, onSelectNote, onRefresh }: any) {
+export default function TrashItem({ user, onSelectNote, onRefreshTrash, onRefreshSidebar }: any) {
     const [trashData, setTrashData] = useState<any>(null);
 
     const refreshTrash = async () => {
@@ -21,8 +21,9 @@ export default function TrashItem({ user, onSelectNote, onRefresh }: any) {
                     item={folder} 
                     type="folder" 
                     onSelectNote={onSelectNote}
-                    onRefresh={onRefresh}
+                    onRefresh={onRefreshSidebar}
                     user={user}
+                    fromTrash={true}
                 />
             ))}
             {trashData?.notes?.map((note: any) => (
@@ -31,7 +32,8 @@ export default function TrashItem({ user, onSelectNote, onRefresh }: any) {
                     item={note} 
                     type="note" 
                     onSelectNote={onSelectNote}
-                    onRefresh={onRefresh}
+                    onRefresh={onRefreshSidebar}
+                    fromTrash={true}
                 />
             ))}
         </div>
