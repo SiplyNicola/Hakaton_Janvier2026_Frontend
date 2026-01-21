@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import ReactQuill from 'react-quill-new';
+import ReactQuill, { Quill } from 'react-quill-new'; // Ajoute { Quill } ici
 import 'react-quill-new/dist/quill.snow.css';
-
 import Showdown from 'showdown';
 import TurndownService from 'turndown';
 import "./editor.css";
 import html2pdf from 'html2pdf.js';
+// @ts-ignore
+import MarkdownShortcuts from 'quill-markdown-shortcuts';
+Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
+
 
 // --- CONFIGURATION DES CONVERTISSEURS ---
 
@@ -196,6 +199,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
             ['link'],
             ['clean']
         ],
+        markdownShortcuts: {}
     };
 
     // --- RENDU ---

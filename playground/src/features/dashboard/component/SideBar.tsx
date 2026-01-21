@@ -2,7 +2,7 @@ import { folderService } from '../../../services/folder-service';
 import { noteService } from '../../../services/note-service';
 import TreeItem from './TreeItem';
 import "./SideBar.css";
-import { useState } from 'react';
+
 
 
 export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefresh, user, onLogout }: any) {
