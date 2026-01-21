@@ -8,6 +8,7 @@ import "./editor.css";
 import html2pdf from 'html2pdf.js';
 
 // --- EXTENSION : LIENS INTERNES (WIKILINKS)
+// Supporte : [[123]] ou [[123|Titre]] ou [[note:123|Titre]]
 const internalLinkExtension = {
     type: 'lang',
     regex: /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g,
@@ -24,7 +25,7 @@ const internalLinkExtension = {
 // 1. Showdown (Lecture : Markdown -> HTML)
 const mdToHtmlConverter = new Showdown.Converter({
     strikethrough: true,    
-    simpleLineBreaks: true, 
+    simpleLineBreaks: true, // "Enter" crée un saut de ligne <br>
     openLinksInNewWindow: false,
     extensions: [internalLinkExtension]
 });
@@ -36,7 +37,10 @@ const htmlToMdConverter = new TurndownService({
     emDelimiter: '*'          //  * pour l'italique
 });
 
+
+
 // BARRÉ (Strikethrough)
+// Convertit <s>, <del>, <strike> en ~~texte~~
 htmlToMdConverter.addRule('strikethrough', {
     filter: ['del', 's', 'strike' as any], 
     replacement: function (content) {
@@ -45,6 +49,7 @@ htmlToMdConverter.addRule('strikethrough', {
 });
 
 // SOULIGNÉ (Underline)
+// Force l'utilisation de la balise HTML <u> car le MD standard ne le gère pas
 htmlToMdConverter.addRule('underline', {
     filter: ['u'],
     replacement: function (content) {
@@ -72,7 +77,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 // --- COMPOSANT PRINCIPAL ---
-export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n: any) => void, onOpenNoteById?: (id: number) => void }) {
+export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (n: any) => void, onOpenNoteById?: (id: number) => void }) {
     
     // --- ÉTATS ---
     const [htmlContent, setHtmlContent] = useState("");
@@ -83,7 +88,7 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     const [meta, setMeta] = useState({ chars: 0, words: 0, lines: 0, size: 0 });
     const readViewRef = useRef<HTMLDivElement | null>(null);
     
-    // --- AJOUT : REF pour Quill ---
+    // --- AJOUT REF (Nécessaire pour les fonctions Markdown) ---
     const quillRef = useRef<ReactQuill>(null);
 
 
@@ -130,7 +135,9 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     }, [mode, htmlContent, onOpenNoteById]);
 
 
-    // --- AJOUT : LOGIQUE REVERSE MARKDOWN (Double Clic) ---
+    // --- AJOUT FONCTIONNALITÉS MARKDOWN ---
+
+    // 1. REVERSE MARKDOWN (Double Clic)
     const handleDoubleClick = () => {
         if (mode !== 'write' || !quillRef.current) return;
 
@@ -138,19 +145,21 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
         const range = editor.getSelection();
         if (!range) return;
 
-        // On utilise getLeaf pour trouver le style précis sous le curseur
-        const [leaf] = editor.getLeaf(range.index);
+        const leafResult = editor.getLeaf(range.index);
+        if (!leafResult) return;
+        const [leaf] = leafResult;
+        
         if (!leaf || !leaf.parent) return;
 
         const parentBlot = leaf.parent;
-        const parentTag = parentBlot.domNode.tagName; // STRONG, EM, U, S...
+        const parentTag = parentBlot.domNode.tagName; 
 
-        const transformToMd = (tag: string, formatName: string) => {
+        // Helper pour Inline (Gras, etc.)
+        const transformInlineToMd = (tag: string, formatName: string) => {
             const blotIndex = editor.getIndex(parentBlot);
             const blotLength = parentBlot.length();
             const text = parentBlot.domNode.innerText || parentBlot.domNode.textContent;
 
-            // Si déjà en markdown, on arrête
             if (text.startsWith(tag) && text.endsWith(tag)) return;
 
             editor.formatText(blotIndex, blotLength, formatName, false);
@@ -159,12 +168,28 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
             setTimeout(() => editor.setSelection(blotIndex + tag.length, blotLength), 0);
         };
 
-        // Détection des balises
-        if (parentTag === 'STRONG' || parentTag === 'B') transformToMd("**", "bold");
-        else if (parentTag === 'EM' || parentTag === 'I') transformToMd("*", "italic");
-        else if (parentTag === 'S' || parentTag === 'STRIKE') transformToMd("~~", "strike");
+        // Helper pour Titres (H1, H2)
+        const transformHeaderToMd = (level: number) => {
+            const lineResult = editor.getLine(range.index);
+            if (!lineResult) return;
+            const [line] = lineResult;
+            if (!line) return;
+
+            const lineIndex = editor.getIndex(line);
+            const prefix = level === 1 ? '# ' : '## ';
+            const text = line.domNode.innerText;
+
+            if (text.startsWith(prefix)) return;
+
+            editor.formatLine(lineIndex, 1, 'header', false);
+            editor.insertText(lineIndex, prefix);
+            setTimeout(() => editor.setSelection(range.index + prefix.length), 0);
+        };
+
+        if (parentTag === 'STRONG' || parentTag === 'B') transformInlineToMd("**", "bold");
+        else if (parentTag === 'EM' || parentTag === 'I') transformInlineToMd("*", "italic");
+        else if (parentTag === 'S' || parentTag === 'STRIKE') transformInlineToMd("~~", "strike");
         else if (parentTag === 'U') {
-            // Cas spécial souligné (pas de MD standard, on utilise HTML)
             const blotIndex = editor.getIndex(parentBlot);
             const blotLength = parentBlot.length();
             const text = parentBlot.domNode.innerText;
@@ -174,22 +199,28 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
             editor.insertText(blotIndex, '<u>');
             setTimeout(() => editor.setSelection(blotIndex + 3, blotLength), 0);
         }
+        else if (parentTag === 'H1') transformHeaderToMd(1);
+        else if (parentTag === 'H2') transformHeaderToMd(2);
     };
 
-    // --- AJOUT : LOGIQUE LIVE MARKDOWN (Frappe) ---
+    // 2. LIVE MARKDOWN (Frappe)
     const checkLiveMarkdown = (editor: any) => {
         const selection = editor.getSelection();
         if (!selection) return;
 
-        const [leaf] = editor.getLeaf(selection.index - 1);
+        const leafResult = editor.getLeaf(selection.index - 1);
+        if (!leafResult) return;
+        const [leaf] = leafResult;
         if (!leaf || !leaf.text) return;
 
-        // On vérifie le texte de la ligne courante
-        const [line, offset] = editor.getLine(selection.index);
+        const lineResult = editor.getLine(selection.index);
+        if (!lineResult) return;
+        const [line, offset] = lineResult;
+        if (!line) return;
+
         const lineText = line.domNode.innerText;
         const textUntilCursor = lineText.substring(0, offset);
 
-        // Titres (#, ##)
         if (textUntilCursor === '# ') {
             editor.formatLine(selection.index, 1, 'header', 1);
             editor.deleteText(selection.index - 2, 2);
@@ -201,7 +232,6 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
             return;
         }
 
-        // Inline Styles (**bold**, *italic*, etc.)
         const patterns = [
             { regex: /\*\*([^*\n]+)\*\* $/, format: 'bold' },
             { regex: /\*([^*\n]+)\* $/, format: 'italic' },
@@ -229,14 +259,12 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
 
     // --- HANDLERS ---
 
-    // Quand l'utilisateur tape dans l'éditeur Rich Text
-    const handleEditorChange = (contentHtml: string, delta: any, source: string, editor: any) => {
+    // Note : Ajout des arguments delta/source/editor pour le Live Markdown
+    const handleEditorChange = (contentHtml: string, _delta: any, source: string, editor: any) => {
         setHtmlContent(contentHtml);
-        // Conversion temps réel HTML -> MD pour la sauvegarde
         const generatedMarkdown = htmlToMdConverter.turndown(contentHtml);
         setMarkdownContent(generatedMarkdown);
 
-        // --- AJOUT : Appel Live Markdown ---
         if (source === 'user' && quillRef.current) {
             checkLiveMarkdown(quillRef.current.getEditor());
         }
@@ -245,7 +273,6 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
     const handleSwitchMode = async (newMode: 'write' | 'read') => {
         setMode(newMode);
         const isWriteMode = newMode === 'write';
-        
         note.is_write_mode = isWriteMode; 
 
         try {
@@ -254,7 +281,6 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ is_write_mode: isWriteMode }),
             });
-
             if (!response.ok) {
                 console.error("Erreur API lors du changement de mode");
                 setMode(!isWriteMode ? 'write' : 'read');
@@ -279,7 +305,6 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
         };
 
         const element = document.createElement('div');
-        
         element.innerHTML = `
             <style>
                 .pdf-container {
@@ -290,21 +315,17 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                     font-size: 12pt;
                     line-height: 1.5;
                 }
-                
                 .pdf-content, .pdf-content * {
                     background-color: transparent !important; 
                     color: black !important;                  
                     text-shadow: none !important;             
                 }
-
                 .pdf-content strong { font-weight: bold; }
                 .pdf-content em { font-style: italic; }
-                
                 .pdf-content a {
                     color: blue !important;
                     text-decoration: underline !important;
                 }
-
                 h1.pdf-title {
                     background-color: transparent !important;
                     color: black !important;
@@ -316,19 +337,14 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                     padding-bottom: 10px;
                 }
             </style>
-
             <div class="pdf-container">
                 <h1 class="pdf-title">${title}</h1>
-                <div class="pdf-content">
-                    ${htmlContent}
-                </div>
+                <div class="pdf-content">${htmlContent}</div>
             </div>
         `;
 
         html2pdf().set(opt).from(element).save();
     };
-
-
 
     // Configuration Toolbar Quill
     const modules = {
@@ -352,33 +368,10 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                     placeholder="Titre de la note..."
                 />
                 <div className="mode-toggle">
-                    <button 
-                        onClick={() => handleSwitchMode('write')} 
-                        className={mode === 'write' ? 'active' : ''}
-                    >
-                        Unleashed
-                    </button>
-                    <button 
-                        onClick={() => handleSwitchMode('read')} 
-                        className={mode === 'read' ? 'active' : ''}
-                    >
-                        Sealed
-                    </button>
-
-                    <button 
-                        onClick={handleExportPDF} 
-                        title="Export as PDF"
-                        style={{ fontSize: '1.2rem', padding: '5px 10px' }}
-                    >
-                        🖨️
-                    </button>
-                    
-                    <button 
-                        className="save-btn" 
-                        onClick={() => onSave({...note, title, content_markdown: markdownContent})}
-                    >
-                        Commit to Ink
-                    </button>
+                    <button onClick={() => handleSwitchMode('write')} className={mode === 'write' ? 'active' : ''}>Unleashed</button>
+                    <button onClick={() => handleSwitchMode('read')} className={mode === 'read' ? 'active' : ''}>Sealed</button>
+                    <button onClick={handleExportPDF} title="Export as PDF" style={{ fontSize: '1.2rem', padding: '5px 10px' }}>🖨️</button>
+                    <button className="save-btn" onClick={() => onSave({...note, title, content_markdown: markdownContent})}>Commit to Ink</button>
                 </div>
             </header>
 
@@ -386,11 +379,10 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                 {mode === 'write' ? (
                     <div 
                         className="rich-text-wrapper"
-                        // --- AJOUT : Interception du Double Clic sur la DIV ---
-                        onDoubleClick={handleDoubleClick}
+                        onDoubleClick={handleDoubleClick} // AJOUT
                     >
                         <ReactQuill 
-                            ref={quillRef} // --- AJOUT : REF ---
+                            ref={quillRef} // AJOUT
                             theme="snow"
                             value={htmlContent}
                             onChange={handleEditorChange}
