@@ -29,11 +29,6 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
         onRefresh();
     };
 
-    const [isTrashSection, setTrashSectionBoolean] = useState(true);
-    const changeTrashStatus = () => {
-        setTrashSectionBoolean(!isTrashSection);
-        console.log(isTrashSection ? "dead" : "living");
-    };//🪦
     const buttonView = {
         living: {caption:"View the Living", emote: "📚"},
         dead: {caption:"View the Dead", emote: "⚰️"}
@@ -46,11 +41,12 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                 <div className="quick-actions">
                     <button title="New grimoir" onClick={addRootFolder}>📁+</button>
                     <button title="New parchment" onClick={addRootNote}>📜+</button>
-                    <button title="View the Dead" 
+                    <button 
+                        title={buttonView[trashStatus ? "living" : "dead"].caption} 
                         onClick={onTrashStatus}
-                        disabled={trashStatus}
-                    >⚰️</button>
-                    <button title="Import">📥</button>
+                    >
+                        {buttonView[trashStatus ? "living" : "dead"].emote}
+                    </button>
                 </div>
             </div>
             

@@ -7,7 +7,7 @@ export default function TrashItem({ onTrashStatus, user }: any) {
     const refreshTrash = async () => {
         const data = await noteService.getTrash(user.id);
         setTrashData(data);
-        onTrashStatus();
+        //onTrashStatus();
     };
     useEffect(() => { refreshTrash(); }, [user.id]);
 

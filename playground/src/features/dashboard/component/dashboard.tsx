@@ -32,8 +32,7 @@ export function Dashboard({ user, onLogout }: any) {
 
     const changeTrashStatus = () => {
         setSelectedNote(null);
-        setTrashSection(true);
-        return true;
+        setTrashSection(!isTrashSection);
     }
 
     return (
