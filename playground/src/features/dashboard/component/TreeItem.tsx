@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { noteService } from '../../../services/note-service';
 import { folderService } from '../../../services/folder-service';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import "./TreeItem.css";
 
 
 export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: any) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isZipping, setIsZipping] = useState(false);
 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -46,6 +49,63 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
         }
     };
 
+
+    const sanitizeName = (name: string) => {
+        return (name || "Untitled").replace(/[/\\?%*:|"<>]/g, '-');
+    };
+
+    const addFolderToZip = async (folderItem: any, zipFolder: JSZip | null) => {
+        if (!zipFolder) return;
+
+        if (folderItem.notes && folderItem.notes.length > 0) {
+            for (const notePartial of folderItem.notes) {
+                try {
+                    const fullNote = await noteService.getById(notePartial.id);
+                    const fileName = sanitizeName(fullNote.title) + ".md";
+                    const content = fullNote.content_markdown || "";
+                    
+                    zipFolder.file(fileName, content);
+                } catch (err) {
+                    console.error(`Impossible de récupérer la note ${notePartial.title}`, err);
+                    zipFolder.file(sanitizeName(notePartial.title) + "_ERROR.txt", "Error fetching content");
+                }
+            }
+        }
+
+        if (folderItem.subFolders && folderItem.subFolders.length > 0) {
+            for (const subFolder of folderItem.subFolders) {
+                const subZipFolder = zipFolder.folder(sanitizeName(subFolder.name));
+                await addFolderToZip(subFolder, subZipFolder);
+            }
+        }
+    };
+
+    const handleExportZip = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isZipping) return;
+
+        try {
+            setIsZipping(true);
+            const zip = new JSZip();
+            const rootName = sanitizeName(item.name);
+            
+            const rootFolder = zip.folder(rootName);
+            
+            await addFolderToZip(item, rootFolder);
+
+            const content = await zip.generateAsync({ type: "blob" });
+            
+            saveAs(content, `${rootName}.zip`);
+        } catch (error) {
+            console.error("Erreur lors de la création du ZIP", error);
+            alert("Erreur lors de l'exportation du Grimoire.");
+        } finally {
+            setIsZipping(false);
+        }
+    };
+
+
+
     // --- RENDER NOTE ---
     if (type === "note") {
         return (
@@ -80,6 +140,9 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
                 </span>
 
                 <div className="item-actions">
+                    <button onClick={handleExportZip} title="Download ZIP Archive">
+                        {isZipping ? '⏳' : '📦'}
+                    </button>
                     <button onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
                     <button onClick={(e) => handleAddSubItem(e, 'note')}>📜+</button>
                     <button onClick={handleRename}>✏️</button>
