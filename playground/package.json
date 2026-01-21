@@ -14,6 +14,7 @@
     "@types/turndown": "^5.0.6",
     "@uiw/react-md-editor": "^4.0.11",
     "file-saver": "^2.0.5",
+    "fuzzysort": "^3.1.0",
     "html2pdf.js": "^0.14.0",
     "jszip": "^3.10.1",
     "quill-markdown-shortcuts": "^0.0.10",

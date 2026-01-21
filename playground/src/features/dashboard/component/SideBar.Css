@@ -61,3 +61,37 @@
     border-radius: 8px;
     cursor: pointer;
 }
+
+
+.search-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--spooky-purple);
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--text-white);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--accent-orange);
+    box-shadow: 0 0 10px rgba(255, 137, 6, 0.2);
+}
+
+.search-separator {
+    font-size: 0.8rem;
+    color: var(--text-gray);
+    margin: 10px 0 5px 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.empty-search {
+    padding: 5px 15px;
+    font-style: italic;
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
