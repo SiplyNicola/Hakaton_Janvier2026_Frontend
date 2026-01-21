@@ -41,7 +41,7 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
-                <h3>{user.username}'s Scriptorium</h3>
+                <h3>🎃 {user.username}'s Scriptorium</h3>
                 <div className="quick-actions">
                     <button title="New grimoir" onClick={addRootFolder}>📁+</button>
                     <button title="New parchment" onClick={addRootNote}>📜+</button>
