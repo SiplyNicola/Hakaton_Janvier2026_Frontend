@@ -9,27 +9,24 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
     
     const addRootFolder = async () => {
         const name = prompt("Name of the new grimoir (folder):");
-        await folderService.create(name || "", user.id);
+        if (name === null) return; // cancelled
+        const trimmed = name.trim();
+        if (!trimmed) return; // empty
+        await folderService.create(trimmed, user.id);
         onRefresh();
     };
 
     const addRootNote = async () => {
         const title = prompt("Title of the new parchment (note) :");
-        if (title) {
-            await noteService.create({
-                title,
-                content_markdown: "",
-                owner_id: user.id,
-                folder_id: null
-            });
-        } else {
-            await noteService.create({
-                title: "",
-                content_markdown: "",
-                owner_id: user.id,
-                folder_id: null
-            });
-        }
+        if (title === null) return; // cancelled
+        const trimmed = title.trim();
+        if (!trimmed) return; // empty
+        await noteService.create({
+            title: trimmed,
+            content_markdown: "",
+            owner_id: user.id,
+            folder_id: null
+        });
         onRefresh();
     };
 
