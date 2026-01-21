@@ -29,6 +29,17 @@ export const folderService = {
         });
         if (!response.ok) throw new Error("Échec de la suppression du dossier");
         return await response.json();
-    }
+    },
 
+    trash: async (id: number) => {
+        const response = await fetch(`${API_URL}/api/folders/trash/${id}`, { method: "PUT" });
+        if (!response.ok) throw new Error("Échec de la mise à la corbeille du dossier");
+        return await response.json();
+    },
+
+    restore: async (id: number) => {
+        const response = await fetch(`${API_URL}/api/folders/restore/${id}`, { method: "PUT" });
+        if (!response.ok) throw new Error("Échec de la restauration du dossier");
+        return await response.json();
+    }
 };

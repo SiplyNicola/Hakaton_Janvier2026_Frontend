@@ -14,8 +14,11 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
         e.stopPropagation();
         if (!confirm(`Do you want to send this ${type === 'note' ? 'parchment' : 'grimoir'} to the grave?`)) return;
         
-        if (type === "note") await noteService.delete(item.id);
-        else await folderService.delete(item.id);
+        /*if (type === "note") await noteService.delete(item.id);
+        else await folderService.delete(item.id);*/
+        console.log("Trashing item:", item, "of type:", type);
+        if (type === "note") await noteService.trash(item.id);
+        else await folderService.trash(item.id);
         onRefresh();
     };
 
@@ -35,9 +38,10 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
         const raw = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'grimoir'} :`);
-        if (raw === null) return; // cancelled
-        const name = raw.trim();
-        if (!name) return; // empty
+       
+        if (raw === null) return; 
+
+        const name = raw.trim() || (subType === 'note' ? "Untitled Parchment" : "New Grimoir");
 
         if (subType === 'note') {
             await noteService.create({ title: name, content_markdown: "", owner_id: user.id, folder_id: item.id });

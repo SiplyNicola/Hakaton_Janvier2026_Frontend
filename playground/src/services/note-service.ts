@@ -36,5 +36,15 @@ export const noteService = {
         if (!response.ok) throw new Error("Échec de la suppression de la note");
         
         return true;
+    },
+    trash: async (id: number) => {
+        const response = await fetch(`${API_URL}/note/trash/${id}`, { method: "PUT" });
+        if (!response.ok) throw new Error("Échec de la mise à la corbeille de la note");
+        return await response.json();
+    },
+    restore: async (id: number) => {
+        const response = await fetch(`${API_URL}/note/restore/${id}`, { method: "PUT" });
+        if (!response.ok) throw new Error("Échec de la restauration de la note");
+        return await response.json();
     }
 };

@@ -1,14 +1,24 @@
-import { useState, useEffect } from 'react';
-import ReactQuill, { Quill } from 'react-quill-new'; // Ajoute { Quill } ici
+import { useState, useEffect, useRef } from 'react';
+import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+
 import Showdown from 'showdown';
 import TurndownService from 'turndown';
 import "./editor.css";
 import html2pdf from 'html2pdf.js';
-// @ts-ignore
-import MarkdownShortcuts from 'quill-markdown-shortcuts';
-Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
 
+// --- EXTENSION : LIENS INTERNES (WIKILINKS)
+// Supporte : [[123]] ou [[123|Titre]] ou [[note:123|Titre]]
+const internalLinkExtension = {
+    type: 'lang',
+    regex: /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g,
+    replace: function (idPart: string, title?: string) {
+        let id = idPart;
+        if (idPart.startsWith('note:')) id = idPart.split(':')[1];
+        const display = title || id;
+        return `<a class="internal-note-link" href="#" data-note-id="${id} ">${display} style="cursor: pointer";</a>`;
+    }
+};
 
 // --- CONFIGURATION DES CONVERTISSEURS ---
 
@@ -16,7 +26,8 @@ Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
 const mdToHtmlConverter = new Showdown.Converter({
     strikethrough: true,    
     simpleLineBreaks: true, // "Enter" crée un saut de ligne <br>
-    openLinksInNewWindow: true
+    openLinksInNewWindow: false,
+    extensions: [internalLinkExtension]
 });
 
 // 2. Turndown (Ecriture : HTML -> Markdown)
@@ -46,6 +57,13 @@ htmlToMdConverter.addRule('underline', {
     }
 });
 
+htmlToMdConverter.addRule('internalLink', {
+    filter: (node: any) => node.nodeName === 'A' && node.classList.contains('internal-note-link'),
+    replacement: (content, node: any) => {
+        const id = node.getAttribute('data-note-id');
+        return `[[${id}|${content}]]`;
+    }
+});
 
 // --- TYPES & CONSTANTES ---
 interface Note {
@@ -59,7 +77,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 
 // --- COMPOSANT PRINCIPAL ---
-export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void }) {
+export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n: any) => void, onOpenNoteById?: (id: number) => void }) {
     
     // --- ÉTATS ---
     const [htmlContent, setHtmlContent] = useState("");
@@ -68,6 +86,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
     const [mode, setMode] = useState<'write' | 'read'>(note.is_write_mode ? 'write' : 'read');
     
     const [meta, setMeta] = useState({ chars: 0, words: 0, lines: 0, size: 0 });
+    const readViewRef = useRef<HTMLDivElement | null>(null);
 
 
     // 1. Initialisation du CONTENU (Titre, Markdown, HTML)
@@ -90,6 +109,27 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
         const size = new TextEncoder().encode(markdownContent).length;
         setMeta({ chars: markdownContent.length, words, lines, size });
     }, [markdownContent]);
+
+    useEffect(() => {
+        const handleInternalClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            const link = target.closest('.internal-note-link');
+
+            if (link) {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = link.getAttribute('data-note-id');
+                if (id && onOpenNoteById) {
+                    onOpenNoteById(Number(id)); 
+                }
+            }
+        };
+        const container = readViewRef.current;
+        if (mode === 'read' && container) {
+            container.addEventListener('click', handleInternalClick);
+        }
+        return () => container?.removeEventListener('click', handleInternalClick);
+    }, [mode, htmlContent, onOpenNoteById]);
 
 
     // --- HANDLERS ---
@@ -199,7 +239,6 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
             ['link'],
             ['clean']
         ],
-        markdownShortcuts: {}
     };
 
     // --- RENDU ---
@@ -258,6 +297,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
                     <div className="ql-snow">
                         <div 
                             className="ql-editor"
+                            ref={readViewRef}
                             style={{ 
                                 border: 'none', 
                                 padding: '15px',

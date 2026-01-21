@@ -72,7 +72,7 @@ export function Dashboard({ user, onLogout }: any) {
                     />
                 ) :
                 isTrashSection ? (
-                    <TrashItem user={user} onTrashStatus={changeTrashStatus} />
+                    <TrashItem user={user} />
                 )
                 : (
                     <div className="empty-state">

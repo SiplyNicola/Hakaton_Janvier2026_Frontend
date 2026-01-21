@@ -4,24 +4,27 @@ import TreeItem from './TreeItem';
 import "./SideBar.css";
 
 
-
 export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefresh, user, onLogout }: any) {
-    const addRootFolder = async () => {
+
+ const addRootFolder = async () => {
         const name = prompt("Name of the new grimoir (folder):");
-        if (name === null) return; // cancelled
-        const trimmed = name.trim();
-        if (!trimmed) return; // empty
-        await folderService.create(trimmed, user.id);
+        if (name === null) return; 
+    
+        const finalName = name.trim() || "New Grimoir";
+        
+        await folderService.create(finalName, user.id);
         onRefresh();
     };
 
     const addRootNote = async () => {
         const title = prompt("Title of the new parchment (note) :");
-        if (title === null) return; // cancelled
-        const trimmed = title.trim();
-        if (!trimmed) return; // empty
+        if (title === null) return; 
+        
+        // Si vide, on met "Untitled Parchment" par défaut
+        const finalTitle = title.trim() || "Untitled Parchment";
+
         await noteService.create({
-            title: trimmed,
+            title: finalTitle,
             content_markdown: "",
             owner_id: user.id,
             folder_id: null
