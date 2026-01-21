@@ -5,6 +5,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import Showdown from 'showdown';
 import TurndownService from 'turndown';
 import "./editor.css";
+import html2pdf from 'html2pdf.js';
 
 // --- EXTENSION : LIENS INTERNES (WIKILINKS)
 // Supporte : [[123]] ou [[123|Titre]] ou [[note:123|Titre]]
@@ -165,6 +166,69 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
         }
     };
 
+
+    // 2. EXPORT PDF
+    const handleExportPDF = () => {
+        const opt: any = {
+            margin:       15,
+            filename:     `${title || 'document'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true }, 
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        const element = document.createElement('div');
+        
+        element.innerHTML = `
+            <style>
+                .pdf-container {
+                    font-family: Arial, sans-serif;
+                    color: black !important;
+                    background: white !important;
+                    padding: 20px;
+                    font-size: 12pt;
+                    line-height: 1.5;
+                }
+                
+                .pdf-content, .pdf-content * {
+                    background-color: transparent !important; 
+                    color: black !important;                  
+                    text-shadow: none !important;             
+                }
+
+                .pdf-content strong { font-weight: bold; }
+                .pdf-content em { font-style: italic; }
+                
+                .pdf-content a {
+                    color: blue !important;
+                    text-decoration: underline !important;
+                }
+
+                h1.pdf-title {
+                    background-color: transparent !important;
+                    color: black !important;
+                    text-shadow: none !important;
+                    text-align: center; 
+                    margin-bottom: 30px; 
+                    font-size: 24pt; 
+                    border-bottom: 1px solid #ccc; 
+                    padding-bottom: 10px;
+                }
+            </style>
+
+            <div class="pdf-container">
+                <h1 class="pdf-title">${title}</h1>
+                <div class="pdf-content">
+                    ${htmlContent}
+                </div>
+            </div>
+        `;
+
+        html2pdf().set(opt).from(element).save();
+    };
+
+
+
     // Configuration Toolbar Quill
     const modules = {
         toolbar: [
@@ -198,6 +262,14 @@ export function Editor({ note, onSave,onOpenNoteById}: { note: Note, onSave: (n:
                         className={mode === 'read' ? 'active' : ''}
                     >
                         Sealed
+                    </button>
+
+                    <button 
+                        onClick={handleExportPDF} 
+                        title="Export as PDF"
+                        style={{ fontSize: '1.2rem', padding: '5px 10px' }}
+                    >
+                        🖨️
                     </button>
                     
                     <button 

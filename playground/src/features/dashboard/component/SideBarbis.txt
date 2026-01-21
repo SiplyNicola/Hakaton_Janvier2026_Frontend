@@ -6,29 +6,38 @@ import { useState } from 'react';
 
 
 export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefresh, user, onLogout }: any) {
+    
     const addRootFolder = async () => {
         const name = prompt("Name of the new grimoir (folder):");
-        if (name === null) return; // cancelled
-        const trimmed = name.trim();
-        if (!trimmed) return; // empty
-        await folderService.create(trimmed, user.id);
+        await folderService.create(name || "", user.id);
         onRefresh();
     };
 
     const addRootNote = async () => {
         const title = prompt("Title of the new parchment (note) :");
-        if (title === null) return; // cancelled
-        const trimmed = title.trim();
-        if (!trimmed) return; // empty
-        await noteService.create({
-            title: trimmed,
-            content_markdown: "",
-            owner_id: user.id,
-            folder_id: null
-        });
+        if (title) {
+            await noteService.create({
+                title,
+                content_markdown: "",
+                owner_id: user.id,
+                folder_id: null
+            });
+        } else {
+            await noteService.create({
+                title: "",
+                content_markdown: "",
+                owner_id: user.id,
+                folder_id: null
+            });
+        }
         onRefresh();
     };
 
+    const [isTrashSection, setTrashSectionBoolean] = useState(true);
+    const changeTrashStatus = () => {
+        setTrashSectionBoolean(!isTrashSection);
+        console.log(isTrashSection ? "dead" : "living");
+    };//🪦
     const buttonView = {
         living: {caption:"View the Living", emote: "📚"},
         dead: {caption:"View the Dead", emote: "⚰️"}
@@ -41,12 +50,11 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                 <div className="quick-actions">
                     <button title="New grimoir" onClick={addRootFolder}>📁+</button>
                     <button title="New parchment" onClick={addRootNote}>📜+</button>
-                    <button 
-                        title={buttonView[trashStatus ? "living" : "dead"].caption} 
+                    <button title="View the Dead" 
                         onClick={onTrashStatus}
-                    >
-                        {buttonView[trashStatus ? "living" : "dead"].emote}
-                    </button>
+                        disabled={trashStatus}
+                    >⚰️</button>
+                    <button title="Import">📥</button>
                 </div>
             </div>
             
