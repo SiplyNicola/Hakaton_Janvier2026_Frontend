@@ -173,7 +173,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
                             value={htmlContent}
                             onChange={handleEditorChange}
                             modules={modules}
-                            style={{ height: '600px', display: 'flex', flexDirection: 'column' }} 
+                            style={{ height: '100%', display: 'flex', flexDirection: 'column' }} 
                         />
                     </div>
                 ) : (
@@ -183,7 +183,7 @@ export function Editor({ note, onSave }: { note: Note, onSave: (n: any) => void 
                             style={{ 
                                 border: 'none', 
                                 padding: '15px',
-                                height: '500px', 
+                                height: '100%', 
                                 overflowY: 'auto',
                                 overflowWrap: 'break-word',
                                 wordBreak: 'break-word',

@@ -9,6 +9,15 @@
     --ghost-gray: #a7a9be;
 }
 
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+   
+}
+
 .editor-header {
     padding: 20px 40px;
     border-bottom: 1px solid var(--spooky-purple);
@@ -75,7 +84,7 @@
 }
 
 .content-area {
-    flex: 1;             
+    flex: 1 1 auto;             
     display: flex;       
     flex-direction: column;
     padding: 0;     
@@ -99,14 +108,18 @@
 
 
 .metadata-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
     color: #fcf8f8;
     padding: 10px 40px;
     display: flex;
-    justify-content: center;
-    gap: 40px;
+    justify-content: flex-start;
+    gap: 8px 16px;
     font-weight: bold;
     font-size: 1rem;
     box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0px;
     
 }
 
@@ -138,3 +151,4 @@
     word-break: break-word; 
     white-space: pre-wrap;
 }
+
