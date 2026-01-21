@@ -55,7 +55,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
                 
                 {/* 2. On met le titre dans son propre span avec la classe CSS spéciale */}
                 <span className="tree-item-title" title={item.title}>
-                    {item.title || "Untitled Note"}
+                    {item.title || "Untitled Parchment"}
                 </span>
 
                 {/* Les boutons sont maintenant en position: absolute grâce au CSS */}
@@ -76,7 +76,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user }: 
                 
                 {/* 2. On met le nom dans son propre span avec la classe CSS spéciale */}
                 <span className="tree-item-title" title={item.name}>
-                    {item.name || "Untitled Folder"}
+                    {item.name || "Untitled Grimoir"}
                 </span>
 
                 <div className="item-actions">

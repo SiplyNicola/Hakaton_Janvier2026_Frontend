@@ -2,19 +2,15 @@ import { folderService } from '../../../services/folder-service';
 import { noteService } from '../../../services/note-service';
 import TreeItem from './TreeItem';
 import "./SideBar.css";
+import { useState } from 'react';
 
 
 export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) {
     
     const addRootFolder = async () => {
         const name = prompt("Name of the new grimoir (folder):");
-        if (name) {
-            await folderService.create(name, user.id);
-            onRefresh();
-        } else { 
-            await folderService.create("", user.id);
-            onRefresh();
-        }
+        await folderService.create(name || "", user.id);
+        onRefresh();
     };
 
     const addRootNote = async () => {
@@ -26,7 +22,6 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
                 owner_id: user.id,
                 folder_id: null
             });
-            onRefresh();
         } else {
             await noteService.create({
                 title: "",
@@ -34,8 +29,18 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
                 owner_id: user.id,
                 folder_id: null
             });
-            onRefresh();
         }
+        onRefresh();
+    };
+
+    const [isTrashSection, setTrashSectionBoolean] = useState(true);
+    const changeTrashStatus = () => {
+        setTrashSectionBoolean(!isTrashSection);
+        console.log(isTrashSection ? "dead" : "living");
+    };//🪦
+    const buttonView = {
+        living: {caption:"View the Living", emote: "📚"},
+        dead: {caption:"View the Dead", emote: "⚰️"}
     };
 
     return (
@@ -45,6 +50,13 @@ export function Sidebar({ data, onSelectNote, onRefresh, user, onLogout }: any) 
                 <div className="quick-actions">
                     <button title="New grimoir" onClick={addRootFolder}>📁+</button>
                     <button title="New parchment" onClick={addRootNote}>📜+</button>
+                    <button 
+                        title={buttonView[isTrashSection ? "dead" : "living"].caption} 
+                        onClick={changeTrashStatus}
+                    >
+                        {buttonView[isTrashSection ? "dead" : "living"].emote}
+                    </button>
+                    <button title="Import">📥</button>
                 </div>
             </div>
             
