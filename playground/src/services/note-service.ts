@@ -5,6 +5,10 @@ export const noteService = {
         const response = await fetch(`${API_URL}/note/sidebar/${userId}`);
         return await response.json();
     },
+    getTrash: async (userId: number) => {
+        const response = await fetch(`${API_URL}/note/getTrash/${userId}`);
+        return await response.json();
+    },
     getById: async (id: number) => {
         const response = await fetch(`${API_URL}/note/${id}`);
         return await response.json();
