@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { noteService } from "../../../services/note-service";
+import TreeItem from "./TreeItem";
 
-export default function TrashItem({ onTrashStatus, user }: any) {
+export default function TrashItem({ user, onSelectNote, onRefresh }: any) {
     const [trashData, setTrashData] = useState<any>(null);
 
     const refreshTrash = async () => {
