@@ -14,7 +14,11 @@ export function Dashboard({ user, onLogout }: any) {
     const refreshSidebar = async () => {
         const data = await noteService.getSidebar(user.id);
         setSidebarData(data);
+
+        const tdata = await noteService.getTrash(user.id)
+        setTrashData(tdata);
     };
+
     const refreshTrash = async () => {
         const data = await noteService.getTrash(user.id);
         setTrashData(data);

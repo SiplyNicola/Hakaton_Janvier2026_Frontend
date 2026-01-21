@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { noteService } from '../../../services/note-service';
 import { folderService } from '../../../services/folder-service';
-import JSZip from 'jszip';
+import JSZip, { folder } from 'jszip';
 import { saveAs } from 'file-saver';
 import "./TreeItem.css";
 
@@ -21,6 +21,24 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
         else await folderService.trash(item.id);
         onRefresh();
     };
+
+    const handleRestore = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if(!confirm(`Do you want to restore this ${type === 'note' ? 'parchement' : 'grimoir'} ?")`)) return;
+
+        if(type === "note") await noteService.restore(item.id);
+        else await folderService.restore(item.id);
+        onRefresh();
+    };
+
+    const handleDeleteDefinitely = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if(!confirm(`Do you want to delete definitely this ${type === 'note' ? 'parchement' : 'grimoir'} ?`)) return;
+
+        if(type === "note") await noteService.delete(item.id);
+        else await folderService.delete(item.id);
+        onRefresh();
+    }
 
     const handleRename = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -125,8 +143,8 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
                 <div className="item-actions">
                     { fromTrash ? 
                         <>
-                            <button title='Revive'>↩️</button>
-                            <button title='Bury'>❌</button>
+                            <button title='Revive' onClick={handleRestore}>↩️</button>
+                            <button title='Bury' onClick={handleDeleteDefinitely}>❌</button>
                         </>
                         :  
                         <>
@@ -154,8 +172,8 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
                 <div className="item-actions">
                     { fromTrash ? 
                         <>
-                            <button title='Revive'>↩️</button>
-                            <button title='Bury'>❌</button>
+                            <button title='Revive' onClick={handleRestore}>↩️</button>
+                            <button title='Bury' onClick={handleDeleteDefinitely}>❌</button>
                         </>
                         :  
                         <>
