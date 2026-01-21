@@ -8,8 +8,10 @@
 }
 
 .tree-item-row {
-    position: relative; 
+    position: static; 
     
+    height: auto;
+
     display: flex;
     justify-content: flex-start; 
     align-items: center;
@@ -19,19 +21,19 @@
     cursor: pointer;
     transition: 0.2s;
     
-    overflow: hidden; 
+    /*overflow: hidden;*/
     z-index: 1;
     
 }
 
-.tree-item-row:hover {
+/*.tree-item-row:hover {
     background: rgba(255, 137, 6, 0.1);
-}
+}*/
 
 .tree-item-title {
     flex: 1;               
     white-space: nowrap;    
-    overflow: hidden;      
+    /*overflow: hidden;*/
     text-overflow: ellipsis;
     margin-right: 10px;     
     background-color: transparent !important;
@@ -40,7 +42,8 @@
 }
 
 .item-actions {
-    position: absolute;
+    flex: 2;
+    position: static;
     right: 0;              
     top: 0;
     bottom: 0;            
@@ -51,7 +54,7 @@
     padding-right: 10px;  
     padding-left: 10px;    
     
-    background: linear-gradient(to right, transparent, var(--bg-dark) 40%);
+    background: transparent;
     
     opacity: 0;            
     transition: opacity 0.2s ease-in-out;
@@ -60,6 +63,12 @@
 
 .tree-item-row:hover .item-actions {
     opacity: 1;
+}
+
+.item-actions > button {
+    color: var(--accent-orange);
+    width: 31px;
+    height: 24px;
 }
 
 .folder-content {
