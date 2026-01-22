@@ -33,18 +33,18 @@ export const noteService = {
         const response = await fetch(`${API_URL}/note/${id}`, {
             method: "DELETE"
         });
-        if (!response.ok) throw new Error("Échec de la suppression de la note");
+        if (!response.ok) throw new Error("Failure to delete note");
         
         return true;
     },
     trash: async (id: number) => {
         const response = await fetch(`${API_URL}/note/trash/${id}`, { method: "PUT" });
-        if (!response.ok) throw new Error("Échec de la mise à la corbeille de la note");
+        if (!response.ok) throw new Error("Failure to move note to trash");
         return await response.json();
     },
     restore: async (id: number) => {
         const response = await fetch(`${API_URL}/note/restore/${id}`, { method: "PUT" });
-        if (!response.ok) throw new Error("Échec de la restauration de la note");
+        if (!response.ok) throw new Error("Failure to restore note");
         return await response.json();
     },
 
@@ -54,8 +54,8 @@ export const noteService = {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ is_write_mode: isWriteMode })
         });
-        
-        if (!response.ok) throw new Error("Échec du changement de mode");
+
+        if (!response.ok) throw new Error("Failure to switch mode");
         return await response.json();
     }
 };

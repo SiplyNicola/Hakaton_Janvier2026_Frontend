@@ -74,8 +74,6 @@ htmlToMdConverter.addRule('underline', {
     replacement: (content) => '<u>' + content + '</u>'
 });
 
-// --- TYPES & CONSTANTS ---
-// Interface Note définie localement comme demandé
 interface Note {
     id: number;
     title: string;
