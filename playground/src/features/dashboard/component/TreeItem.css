@@ -55,14 +55,16 @@ h2 {
     background-color: rgba(127, 90, 240, 0.1);
 }*/
 .tree-item-title {
+    flex: 1;                
     white-space: nowrap;    
-    /*overflow: hidden;*/
+    overflow: hidden;       
     text-overflow: ellipsis;
+    max-width: 400px;  
+    min-width: 300px; 
     margin-right: 10px;     
-    background-color: transparent !important;
+    background-color: transparent !important; 
     position: relative; 
-    z-index: 2;
-
+    z-index: 2; 
 }
 
 
