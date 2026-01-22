@@ -6,13 +6,14 @@ import Showdown from 'showdown';
 import TurndownService from 'turndown';
 import "./editor.css";
 import { noteService } from '../../../services/note-service';
+import { applyReverseMarkdown, checkLiveMarkdown } from '../../../utils/markdownUtils';
 
 // @ts-ignore
 import MarkdownShortcuts from 'quill-markdown-shortcuts';
 // Recording the Markdown module (Logic of the 2nd file)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
 
-// --- 1. EXTENSION: INTERNAL LINKS  ---
+// --- 1. EXTENSION: INTERNAL LINKS  ---
 const internalLinkExtension = function () {
     return [{
         type: 'lang',
@@ -74,15 +75,14 @@ htmlToMdConverter.addRule('underline', {
 });
 
 // --- TYPES & CONSTANTS ---
+// Interface Note définie localement comme demandé
 interface Note {
     id: number;
     title: string;
     content_markdown: string;
     is_write_mode?: boolean;
 }
-
 const API_URL = import.meta.env.VITE_API_URL;
-
 // --- MAIN COMPONENT ---
 export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (n: any) => void, onOpenNoteById?: (id: number) => void }) {
     
@@ -151,91 +151,12 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
     // 1. REVERSE MARKDOWN (Double Click)
     const handleDoubleClick = () => {
         if (mode !== 'write' || !quillRef.current) return;
-
-        const editor = quillRef.current.getEditor();
-        const range = editor.getSelection();
-        if (!range) return;
-
-        const leafResult = editor.getLeaf(range.index);
-        if (!leafResult) return;
-        const [leaf] = leafResult;
-        if (!leaf || !leaf.parent) return;
-
-        const parentBlot = leaf.parent;
-        const parentTag = parentBlot.domNode.tagName; 
-
-        // Helper for Inline (Bold, etc.)
-        const transformInlineToMd = (tag: string, formatName: string) => {
-            const blotIndex = editor.getIndex(parentBlot);
-            const blotLength = parentBlot.length();
-            const text = parentBlot.domNode.innerText || parentBlot.domNode.textContent;
-
-            if (text.startsWith(tag) && text.endsWith(tag)) return;
-
-            editor.formatText(blotIndex, blotLength, formatName, false);
-            editor.insertText(blotIndex + blotLength, tag);
-            editor.insertText(blotIndex, tag);
-            setTimeout(() => editor.setSelection(blotIndex + tag.length, blotLength), 0);
-        };
-
-        // Helper for Titles (H1, H2) - Retrieved from File 1 for completeness
-        const transformHeaderToMd = (level: number) => {
-            const lineResult = editor.getLine(range.index);
-            if (!lineResult) return;
-            const [line] = lineResult;
-            if (!line) return;
-
-            const lineIndex = editor.getIndex(line);
-            const prefix = level === 1 ? '# ' : '## ';
-            const text = line.domNode.innerText;
-
-            if (text.startsWith(prefix)) return;
-
-            editor.formatLine(lineIndex, 1, 'header', false);
-            editor.insertText(lineIndex, prefix);
-            setTimeout(() => editor.setSelection(range.index + prefix.length), 0);
-        };
-
-        if (parentTag === 'STRONG' || parentTag === 'B') transformInlineToMd("**", "bold");
-        else if (parentTag === 'EM' || parentTag === 'I') transformInlineToMd("*", "italic");
-        else if (parentTag === 'S' || parentTag === 'STRIKE') transformInlineToMd("~~", "strike");
-        else if (parentTag === 'U') {
-            const blotIndex = editor.getIndex(parentBlot);
-            const blotLength = parentBlot.length();
-            const text = parentBlot.domNode.innerText;
-            if (text.startsWith('<u>')) return;
-            editor.formatText(blotIndex, blotLength, 'underline', false);
-            editor.insertText(blotIndex + blotLength, '</u>');
-            editor.insertText(blotIndex, '<u>');
-            setTimeout(() => editor.setSelection(blotIndex + 3, blotLength), 0);
-        }
-        else if (parentTag === 'H1') transformHeaderToMd(1);
-        else if (parentTag === 'H2') transformHeaderToMd(2);
-    };
-
-    // LIVE MARKDOWN (Frappe)
-    const checkLiveMarkdown = (editor: any) => {
-        const selection = editor.getSelection();
-        if (!selection) return;
-        const [leaf] = editor.getLeaf(selection.index - 1);
-        if (!leaf || !leaf.text) return;
-        const [line, offset] = editor.getLine(selection.index);
-        const textUntilCursor = line.domNode.innerText.substring(0, offset);
-
-        if (textUntilCursor === '# ') {
-            editor.formatLine(selection.index, 1, 'header', 1);
-            editor.deleteText(selection.index - 2, 2);
-            return;
-        }
-        if (textUntilCursor === '## ') {
-            editor.formatLine(selection.index, 1, 'header', 2);
-            editor.deleteText(selection.index - 3, 3);
-            return;
-        }
+        
+        // call the utility function
+        applyReverseMarkdown(quillRef.current.getEditor());
     };
 
     // --- HANDLERS ---
-
     const handleEditorChange = (contentHtml: string, _delta: any, source: string, editor: any) => {
         setHtmlContent(contentHtml);
         
@@ -257,6 +178,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         setMarkdownContent(generatedMarkdown);
 
         if (source === 'user' && quillRef.current) {
+            // call the checkLiveMarkdown utility function
             checkLiveMarkdown(quillRef.current.getEditor());
         }
     };
@@ -266,7 +188,6 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         const isWriteMode = newMode === 'write';
         note.is_write_mode = isWriteMode; 
 
-
         //Switches and recalculates the HTML with the correct converter
         if (newMode === 'read') {
             setHtmlContent(readConverter.makeHtml(markdownContent));
@@ -275,7 +196,6 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         }
 
         noteService.switchMode(note.id, isWriteMode)
-
     };
 
     const handleExportPDF = () => {
@@ -283,16 +203,16 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         window.open(pdfUrl, '_blank');
     };
     
-// Helper: builds the URL to a note according to the router mode
-const toNoteUrl = (id: string | number | null) => {
-  const mode = import.meta.env.VITE_ROUTER_MODE ?? 'browser'; // 'browser' | 'hash'
-  const base = import.meta.env.VITE_PUBLIC_BASE ?? window.location.origin; // ex: http://localhost:5173
-  if (!id && id !== 0) return base;
+    // Helper: builds the URL to a note according to the router mode
+    const toNoteUrl = (id: string | number | null) => {
+      const mode = import.meta.env.VITE_ROUTER_MODE ?? 'browser'; // 'browser' | 'hash'
+      const base = import.meta.env.VITE_PUBLIC_BASE ?? window.location.origin; // ex: http://localhost:5173
+      if (!id && id !== 0) return base;
 
-  return mode === 'hash'
-    ? `${base}/#/note/${id}`
-    : `${base}/note/${id}`;
-}
+      return mode === 'hash'
+        ? `${base}/#/note/${id}`
+        : `${base}/note/${id}`;
+    }
 
     // Configuration Toolbar
     const modules = {
