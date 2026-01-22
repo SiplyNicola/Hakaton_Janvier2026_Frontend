@@ -275,6 +275,11 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
             note.is_write_mode = !isWriteMode;
         }
     };
+
+    const handleExportPDF = () => {
+        const pdfUrl = `${import.meta.env.VITE_API_URL}/api/exports/note/${note.id}/pdf`;
+        window.open(pdfUrl, '_blank');
+    };
     
 // Helper : construit l'URL vers une note selon le mode de router
 const toNoteUrl = (id: string | number | null) => {
@@ -312,6 +317,13 @@ const toNoteUrl = (id: string | number | null) => {
                     <button onClick={() => handleSwitchMode('write')} className={mode === 'write' ? 'active' : ''}>Unleashed</button>
                     <button onClick={() => handleSwitchMode('read')} className={mode === 'read' ? 'active' : ''}>Sealed</button>
                     <button className="save-btn" onClick={() => onSave({...note, title, content_markdown: markdownContent})}>Commit to Ink</button>
+                    <button 
+                        onClick={handleExportPDF} 
+                        title="Export to PDF"
+                        style={{ fontSize: '1.2rem', padding: '5px 10px', marginLeft: '10px' }}
+                    >
+                        Export to PDF
+                    </button>
                 </div>
             </header>
 

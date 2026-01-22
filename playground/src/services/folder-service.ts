@@ -41,5 +41,17 @@ export const folderService = {
         const response = await fetch(`${API_URL}/api/folders/restore/${id}`, { method: "PUT" });
         if (!response.ok) throw new Error("Échec de la restauration du dossier");
         return await response.json();
+    },
+
+    downloadZip: async (folderId: number) => {
+        const response = await fetch(`${API_URL}/api/exports/folder/${folderId}/zip`, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error("Error downloading folder as zip");
+        }
+
+        return await response.blob();
     }
 };

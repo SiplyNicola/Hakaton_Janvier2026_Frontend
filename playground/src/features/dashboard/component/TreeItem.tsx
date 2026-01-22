@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { noteService } from '../../../services/note-service';
 import { folderService } from '../../../services/folder-service';
-import JSZip, { folder } from 'jszip';
 import { saveAs } from 'file-saver';
 import "./TreeItem.css";
 
@@ -24,7 +23,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
 
     const handleRestore = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if(!confirm(`Do you want to restore this ${type === 'note' ? 'parchement' : 'grimoir'} ?")`)) return;
+        if(!confirm(`Do you want to restore this ${type === 'note' ? 'parchement' : 'grimoir'} ?`)) return;
 
         if(type === "note") await noteService.restore(item.id);
         else await folderService.restore(item.id);
@@ -75,51 +74,20 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
         return (name || "Untitled").replace(/[/\\?%*:|"<>]/g, '-');
     };
 
-    const addFolderToZip = async (folderItem: any, zipFolder: JSZip | null) => {
-        if (!zipFolder) return;
-
-        if (folderItem.notes && folderItem.notes.length > 0) {
-            for (const notePartial of folderItem.notes) {
-                try {
-                    const fullNote = await noteService.getById(notePartial.id);
-                    const fileName = sanitizeName(fullNote.title) + ".md";
-                    const content = fullNote.content_markdown || "";
-                    
-                    zipFolder.file(fileName, content);
-                } catch (err) {
-                    console.error(`Impossible de récupérer la note ${notePartial.title}`, err);
-                    zipFolder.file(sanitizeName(notePartial.title) + "_ERROR.txt", "Error fetching content");
-                }
-            }
-        }
-
-        if (folderItem.subFolders && folderItem.subFolders.length > 0) {
-            for (const subFolder of folderItem.subFolders) {
-                const subZipFolder = zipFolder.folder(sanitizeName(subFolder.name));
-                await addFolderToZip(subFolder, subZipFolder);
-            }
-        }
-    };
-
     const handleExportZip = async (e: React.MouseEvent) => {
         e.stopPropagation();
         if (isZipping) return;
 
         try {
             setIsZipping(true);
-            const zip = new JSZip();
-            const rootName = sanitizeName(item.name);
             
-            const rootFolder = zip.folder(rootName);
+            const blob = await folderService.downloadZip(item.id);
             
-            await addFolderToZip(item, rootFolder);
+            saveAs(blob, `${item.name || 'Archive'}.zip`);
 
-            const content = await zip.generateAsync({ type: "blob" });
-            
-            saveAs(content, `${rootName}.zip`);
         } catch (error) {
-            console.error("Erreur lors de la création du ZIP", error);
-            alert("Erreur lors de l'exportation du Grimoire.");
+            console.error("Erreur ZIP", error);
+            alert("Impossible de télécharger l'archive.");
         } finally {
             setIsZipping(false);
         }
