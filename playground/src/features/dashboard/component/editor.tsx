@@ -122,6 +122,13 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         setMeta({ chars: markdownContent.length, words, lines, size });
     }, [markdownContent]);
 
+    // 4. Calcul meta size
+    const displaySize = (size: number) => {
+        if (size < 1E3) return `${size} B`;
+        else if (size < 1E6) return `${Number((size / 1E3).toFixed(2))} kB`;
+        else return `${Number((size / 1E6).toFixed(2))} MB`;
+    };
+
     // --- GESTION DU CLIC (Mode Lecture) ---
     const handleReadModeClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLElement;
@@ -351,7 +358,7 @@ const toNoteUrl = (id: string | number | null) => {
                 <span>Lines: {meta.lines}</span>
                 <span>Words: {meta.words}</span>
                 <span>Chars: {meta.chars}</span>
-                <span>Size: {meta.size} B</span>
+                <span>Size: {displaySize(meta.size)}</span>
             </footer>
         </div>
     );
