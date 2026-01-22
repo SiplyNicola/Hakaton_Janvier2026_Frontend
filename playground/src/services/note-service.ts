@@ -46,5 +46,16 @@ export const noteService = {
         const response = await fetch(`${API_URL}/note/restore/${id}`, { method: "PUT" });
         if (!response.ok) throw new Error("Échec de la restauration de la note");
         return await response.json();
+    },
+
+    switchMode: async (id: number, isWriteMode: boolean) => {
+        const response = await fetch(`${API_URL}/note/${id}/mode`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ is_write_mode: isWriteMode })
+        });
+        
+        if (!response.ok) throw new Error("Échec du changement de mode");
+        return await response.json();
     }
 };
