@@ -19,7 +19,7 @@
     padding: 60px 40px;
     border-bottom: 1px solid var(--spooky-purple);
     /* background: rgba(0, 0, 0, 0.4);  */
-    background-image: url("../../../assets/graveyard.jpg");
+    background-image: url("../../../assets/cimetery.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -28,8 +28,8 @@
 h2 {
     font-family: 'Creepster', cursive;
     font-size: 5rem;
-    color: var(--accent-orange);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    color: #645888;
+    text-shadow: 2px 2px 4px rgba(131, 12, 178, 0.7);
     text-align: center;
     margin-bottom: 20px;
     background-color: transparent;
