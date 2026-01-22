@@ -116,7 +116,9 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
     // 3. Stats
     useEffect(() => {
         const words = markdownContent.trim() ? markdownContent.trim().split(/\s+/).length : 0;
+        
         const lines = markdownContent.split('\n').length;
+        console.log(markdownContent.split('\n'));
         const size = new TextEncoder().encode(markdownContent).length;
         setMeta({ chars: markdownContent.length, words, lines, size });
     }, [markdownContent]);
@@ -236,6 +238,12 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         setHtmlContent(contentHtml);
         
         let generatedMarkdown = htmlToMdConverter.turndown(contentHtml);
+        
+        htmlToMdConverter.addRule('paragraph', {
+            filter: 'p',
+            replacement: (content) => content + '\n'
+        });
+
         
         // Nettoyage agressif (Logique "Bis" / 2ème fichier)
         // Indispensable pour que les wikilinks soient valides

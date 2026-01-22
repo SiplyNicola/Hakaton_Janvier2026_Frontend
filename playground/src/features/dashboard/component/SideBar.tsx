@@ -54,7 +54,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
             <div className="search-bar-container" style={{marginBottom: '10px', padding: '0 5px'}}>
                 <input 
                     type="text" 
-                    placeholder="🔍 Accio parchment..." 
+                    placeholder="🔍 Search..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="search-input"
