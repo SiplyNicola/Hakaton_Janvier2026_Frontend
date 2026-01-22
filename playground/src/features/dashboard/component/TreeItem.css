@@ -16,10 +16,10 @@
 }
 
 .trash-header {
-    padding: 20px 40px;
+    padding: 60px 40px;
     border-bottom: 1px solid var(--spooky-purple);
     /* background: rgba(0, 0, 0, 0.4);  */
-    background-image: url("../../../assets/haunted-house.jpg");
+    background-image: url("../../../assets/graveyard.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -27,7 +27,7 @@
 
 h2 {
     font-family: 'Creepster', cursive;
-    font-size: 3rem;
+    font-size: 5rem;
     color: var(--accent-orange);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     text-align: center;

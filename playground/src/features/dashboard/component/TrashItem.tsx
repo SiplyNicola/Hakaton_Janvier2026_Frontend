@@ -4,7 +4,7 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
     return (
         <div className="trash-container">
             <div className="trash-header">
-                <h2>Trash</h2>
+                <h2>Graveyard</h2>
             </div>
             {trashData?.folders?.map((folder: any) => (
                 <TreeItem 

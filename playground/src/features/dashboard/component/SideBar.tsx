@@ -104,7 +104,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                     {/* 3. Message unique si ABSOLUMENT RIEN n'est trouvé */}
                     {searchResults.folders.length === 0 && searchResults.notes.length === 0 && (
                         <div className="empty-search">
-                            Aucun parchemin ou grimoire trouvé... 🕸️
+                            Only cobwebs linger here... 🕸️
                         </div>
                     )}
                 </div>
