@@ -31,7 +31,7 @@ const internalLinkExtension = function () {
 
 // --- 2. CONFIGURATION OF CONVERTERS ("Bis" Logic) ---
 
-// Pour la LECTURE (Transforme [[...]] en <span> cliquable)
+// For READING (Transforms [[...]] into a clickable <span>)
 const readConverter = new Showdown.Converter({
     strikethrough: true,    
     simpleLineBreaks: true, 
@@ -39,7 +39,7 @@ const readConverter = new Showdown.Converter({
     extensions: [internalLinkExtension] 
 });
 
-// Pour l'ÉCRITURE (Affiche le code brut [[...]] pour édition)
+// For WRITING (Displays the raw code [[...]] for editing)
 const writeConverter = new Showdown.Converter({
     strikethrough: true,    
     simpleLineBreaks: true, 
@@ -54,7 +54,7 @@ const htmlToMdConverter = new TurndownService({
     emDelimiter: '*'
 });
 
-// Règle de sauvegarde : transforme les SPAN en [[...]]
+// Backup rule: transforms SPAN into [[...]]
 htmlToMdConverter.addRule('internalLink', {
     filter: (node: any) => node.nodeName === 'SPAN' && node.classList.contains('internal-note-link'),
     replacement: (content, node: any) => {
@@ -73,7 +73,7 @@ htmlToMdConverter.addRule('underline', {
     replacement: (content) => '<u>' + content + '</u>'
 });
 
-// --- TYPES & CONSTANTES ---
+// --- TYPES & CONSTANTS ---
 interface Note {
     id: number;
     title: string;
@@ -83,10 +83,10 @@ interface Note {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// --- COMPOSANT PRINCIPAL ---
+// --- MAIN COMPONENT ---
 export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (n: any) => void, onOpenNoteById?: (id: number) => void }) {
     
-    // --- ÉTATS ---
+    // --- STATES ---
     const [htmlContent, setHtmlContent] = useState("");
     const [markdownContent, setMarkdownContent] = useState(note.content_markdown || "");
     const [title, setTitle] = useState(note.title);
@@ -96,7 +96,6 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
     const readViewRef = useRef<HTMLDivElement | null>(null);
     const quillRef = useRef<ReactQuill>(null);
 
-    // 1. Initialisation (Logique "Bis" : choix du convertisseur selon le mode)
     useEffect(() => {
         setTitle(note.title);
         const md = note.content_markdown || "";
@@ -109,12 +108,12 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         }
     }, [note.id, note.title, note.content_markdown]);
 
-    // 2. Mode Sync
+    // Sync Mode
     useEffect(() => {
         setMode(note.is_write_mode ? 'write' : 'read');
     }, [note.id]); 
 
-    // 3. Stats
+    // Stats
     useEffect(() => {
         const words = markdownContent.trim() ? markdownContent.trim().split(/\s+/).length : 0;
         
@@ -123,14 +122,14 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         setMeta({ chars: markdownContent.length, words, lines, size });
     }, [markdownContent]);
 
-    // 4. Calcul meta size
+    // Meta size calculation
     const displaySize = (size: number) => {
         if (size < 1E3) return `${size} B`;
         else if (size < 1E6) return `${Number((size / 1E3).toFixed(2))} kB`;
         else return `${Number((size / 1E6).toFixed(2))} MB`;
     };
 
-    // --- GESTION DU CLIC (Mode Lecture) ---
+    // --- CLICK MANAGEMENT (Read Mode) ---
     const handleReadModeClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLElement;
         const link = target.closest('.internal-note-link');
@@ -147,11 +146,9 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         }
     };
 
-    // --- FONCTIONNALITÉS ÉDITEUR ---
+    // --- EDITOR FEATURES ---
 
-    // 1. REVERSE MARKDOWN (Double Clic)
-    // Combiné : Utilise la logique robuste du 1er fichier (supporte H1/H2) 
-    // car le 2ème fichier ne gérait que le Inline.
+    // 1. REVERSE MARKDOWN (Double Click)
     const handleDoubleClick = () => {
         if (mode !== 'write' || !quillRef.current) return;
 
@@ -167,7 +164,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         const parentBlot = leaf.parent;
         const parentTag = parentBlot.domNode.tagName; 
 
-        // Helper pour Inline (Gras, etc.)
+        // Helper for Inline (Bold, etc.)
         const transformInlineToMd = (tag: string, formatName: string) => {
             const blotIndex = editor.getIndex(parentBlot);
             const blotLength = parentBlot.length();
@@ -181,7 +178,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
             setTimeout(() => editor.setSelection(blotIndex + tag.length, blotLength), 0);
         };
 
-        // Helper pour Titres (H1, H2) - Récupéré du Fichier 1 pour complétude
+        // Helper for Titles (H1, H2) - Retrieved from File 1 for completeness
         const transformHeaderToMd = (level: number) => {
             const lineResult = editor.getLine(range.index);
             if (!lineResult) return;
@@ -216,9 +213,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         else if (parentTag === 'H2') transformHeaderToMd(2);
     };
 
-    // 2. LIVE MARKDOWN (Frappe)
-    // Logique du 2ème fichier : Seuls les titres sont gérés manuellement,
-    // le reste est géré par le plugin MarkdownShortcuts.
+    // LIVE MARKDOWN (Frappe)
     const checkLiveMarkdown = (editor: any) => {
         const selection = editor.getSelection();
         if (!selection) return;
@@ -252,8 +247,8 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         });
 
         
-        // Nettoyage agressif (Logique "Bis" / 2ème fichier)
-        // Indispensable pour que les wikilinks soient valides
+        // Harsh cleaning
+        // Essential for wikilinks to be valid
         generatedMarkdown = generatedMarkdown
             .replace(/\\\[/g, '[')
             .replace(/\\\]/g, ']')
@@ -272,7 +267,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         note.is_write_mode = isWriteMode; 
 
 
-        // Logique "Bis" : Bascule et recalcule le HTML avec le bon convertisseur
+        //Switches and recalculates the HTML with the correct converter
         if (newMode === 'read') {
             setHtmlContent(readConverter.makeHtml(markdownContent));
         } else {
@@ -288,7 +283,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         window.open(pdfUrl, '_blank');
     };
     
-// Helper : construit l'URL vers une note selon le mode de router
+// Helper: builds the URL to a note according to the router mode
 const toNoteUrl = (id: string | number | null) => {
   const mode = import.meta.env.VITE_ROUTER_MODE ?? 'browser'; // 'browser' | 'hash'
   const base = import.meta.env.VITE_PUBLIC_BASE ?? window.location.origin; // ex: http://localhost:5173
@@ -299,7 +294,7 @@ const toNoteUrl = (id: string | number | null) => {
     : `${base}/note/${id}`;
 }
 
-    // Configuration Toolbar (avec Shortcuts du 2ème fichier)
+    // Configuration Toolbar
     const modules = {
         toolbar: [ 
             [{ 'header': [false, 1, 2] }], 
@@ -308,7 +303,7 @@ const toNoteUrl = (id: string | number | null) => {
             ['link'], 
             ['clean'] 
         ],
-        markdownShortcuts: {} // Active le plugin
+        markdownShortcuts: {} 
     };
 
     return (
