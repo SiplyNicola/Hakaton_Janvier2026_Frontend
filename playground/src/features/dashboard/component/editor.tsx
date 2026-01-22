@@ -118,7 +118,6 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         const words = markdownContent.trim() ? markdownContent.trim().split(/\s+/).length : 0;
         
         const lines = markdownContent.split('\n').length;
-        console.log(markdownContent.split('\n'));
         const size = new TextEncoder().encode(markdownContent).length;
         setMeta({ chars: markdownContent.length, words, lines, size });
     }, [markdownContent]);
