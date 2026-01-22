@@ -25,7 +25,7 @@
     background-repeat: no-repeat;
 }
 
-h2 {
+.graveyard-title {
     font-family: 'Creepster', cursive;
     font-size: 5rem;
     color: #645888;
@@ -33,6 +33,7 @@ h2 {
     text-align: center;
     margin-bottom: 20px;
     background-color: transparent;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
 }
 
 
