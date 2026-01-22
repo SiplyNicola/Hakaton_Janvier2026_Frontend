@@ -50,9 +50,10 @@ h2 {
     z-index: 1;
     
 }
+/*
 .tree-item-row:hover {
     background-color: rgba(127, 90, 240, 0.1);
-}
+}*/
 .tree-item-title {
     white-space: nowrap;    
     /*overflow: hidden;*/
