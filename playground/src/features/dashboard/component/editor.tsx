@@ -5,6 +5,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import Showdown from 'showdown';
 import TurndownService from 'turndown';
 import "./editor.css";
+import { noteService } from '../../../services/note-service';
 
 // @ts-ignore
 import MarkdownShortcuts from 'quill-markdown-shortcuts';
@@ -270,6 +271,7 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
         const isWriteMode = newMode === 'write';
         note.is_write_mode = isWriteMode; 
 
+
         // Logique "Bis" : Bascule et recalcule le HTML avec le bon convertisseur
         if (newMode === 'read') {
             setHtmlContent(readConverter.makeHtml(markdownContent));
@@ -277,17 +279,13 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
             setHtmlContent(writeConverter.makeHtml(markdownContent));
         }
 
-        try {
-            await fetch(`${API_URL}/note/${note.id}/mode`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ is_write_mode: isWriteMode }),
-            });
-        } catch (error) {
-            console.error("Erreur réseau :", error);
-            setMode(!isWriteMode ? 'write' : 'read');
-            note.is_write_mode = !isWriteMode;
-        }
+        noteService.switchMode(note.id, isWriteMode)
+
+    };
+
+    const handleExportPDF = () => {
+        const pdfUrl = `${import.meta.env.VITE_API_URL}/api/exports/note/${note.id}/pdf`;
+        window.open(pdfUrl, '_blank');
     };
     
 // Helper : construit l'URL vers une note selon le mode de router
@@ -326,6 +324,13 @@ const toNoteUrl = (id: string | number | null) => {
                     <button onClick={() => handleSwitchMode('write')} className={mode === 'write' ? 'active' : ''}>Unleashed</button>
                     <button onClick={() => handleSwitchMode('read')} className={mode === 'read' ? 'active' : ''}>Sealed</button>
                     <button className="save-btn" onClick={() => onSave({...note, title, content_markdown: markdownContent})}>Commit to Ink</button>
+                    <button 
+                        onClick={handleExportPDF} 
+                        title="Export to PDF"
+                        style={{ fontSize: '1.2rem', padding: '5px 10px', marginLeft: '10px' }}
+                    >
+                        Export to PDF
+                    </button>
                 </div>
             </header>
 
