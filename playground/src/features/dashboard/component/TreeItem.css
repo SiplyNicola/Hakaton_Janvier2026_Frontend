@@ -10,9 +10,11 @@
 }
 
 .trash-container {
-    padding: 10px;
-    height: 100%;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
 }
 
 .trash-header {
@@ -23,6 +25,17 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.trash-separator {
+    flex: 1 1 auto;             
+    display: flex;       
+    flex-direction: column;
+    padding: 0;     
+    overflow: hidden;   
+    overflow-y: auto;  
+    overflow-x: auto;
+    position: relative;
 }
 
 .graveyard-title {
@@ -36,11 +49,84 @@
     -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
 }
 
+
+/* Container styles */
 .empty-trash {
     text-align: center;
+    gap: 12px;                 /* space between text and ghost */
+    font-size: 1.5rem;       /* adjust to taste */
     color: var(--ghost-gray);
-    font-size: 1.2rem;
-    margin-top: 20%;
+    margin: auto;
+    font-family: 'Creepster', cursive;
+}
+
+/* Ghost as a pseudo-element (emoji version) */
+.empty-trash::before,
+.empty-trash::after {
+    content: "👻";             /* <-- swap to SVG via background (see below) */
+    display: inline-block;
+    width: 1.6em;
+    height: 1.6em;
+    line-height: 1;
+    font-size: 2rem;         /* controls emoji size; keep in sync with width/height */
+
+    /* Motion: vertical bob + gentle horizontal drift */
+    animation:
+        ghostFloat 3.4s ease-in-out infinite,
+        ghostDrift 6.8s ease-in-out infinite;
+
+    /* A little depth */
+    opacity: 0.9;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
+    transform-origin: 50% 60%;
+}
+
+
+/* Left ghost */
+.empty-trash::before {
+    order: -1;                   /* ensure it appears before the text in the inline flow */
+    margin-right: 6px;
+    /* Slight desync so they don't move identically */
+    animation-delay: -0.8s, -0.2s;
+}
+
+/* Right ghost (mirrored horizontal drift) */
+.empty-trash::after {
+    margin-left: 6px;
+    animation-name: ghostFloat, ghostDriftRight;
+    animation-delay: -1.4s, -0.6s;
+}
+
+/* Vertical bobbing */
+@keyframes ghostFloat {
+    0%   { transform: translateY(0) rotate(0deg); }
+    50%  { transform: translateY(-6px) rotate(1.5deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* Gentle left-right drift (for left ghost) */
+@keyframes ghostDrift {
+    0%   { margin-left: 6px; }
+    50%  { margin-left: 0px; }
+    100% { margin-left: 6px; }
+}
+
+/* Mirrored drift (for right ghost) */
+@keyframes ghostDriftRight {
+    0%   { margin-right: 6px; }
+    50%  { margin-right: 0px; }
+    100% { margin-right: 6px; }
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+    .empty-trash::before,
+    .empty-trash::after {
+        animation: none;
+        margin-left: 6px;
+        margin-right: 6px;
+        opacity: 0.95;
+    }
 }
 
 .tree-item-row {
@@ -63,8 +149,7 @@
 }*/
 .tree-item-title {
     flex: 1;                
-    white-space: nowrap;    
-    /* overflow: hidden;        */
+    white-space: nowrap;   
     text-overflow: ellipsis;
     max-width: 400px;  
     min-width: 300px; 
@@ -87,8 +172,6 @@
     gap: 8px;
     padding-right: 10px;  
     padding-left: 10px;    
-    
-    background: transparent;
     
     opacity: 0;            
     transition: opacity 0.2s ease-in-out;

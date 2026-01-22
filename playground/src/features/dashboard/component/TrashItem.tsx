@@ -6,10 +6,11 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
             <div className="trash-header">
                 <h2 className="graveyard-title">Graveyard</h2>
             </div>
+            <div className="trash-separator">
             {
                 trashData?.folders.length === 0 && trashData?.notes.length === 0 && (
                     <div className="empty-trash">
-                        The graveyard is silent... 🪦
+                        Silent Night...
                     </div>
                 )
             }
@@ -34,6 +35,7 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
                     fromTrash={true}
                 />
             ))}
+            </div>
         </div>
     );
 }
