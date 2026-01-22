@@ -13,6 +13,14 @@ function RegisterComponent({ onSwitchToLogin }: RegisterProps) {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if(username.length < 3) {
+            alert("Your username need to 3 charactere !");
+            return;
+        }
+        if(password.length < 8) {
+            alert("Your password need to 8 character !");
+            return;
+        }
         
         if (password !== confirmPassword) {
             alert("Passwords do not match!");

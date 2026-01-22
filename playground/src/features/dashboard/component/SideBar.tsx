@@ -41,8 +41,8 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
     }, [searchQuery, data]);
 
     const buttonView = {
-        living: {caption:"View the Living", emote: "📚"},
-        dead: {caption:"View the Dead", emote: "⚰️"}
+        living: {caption:"View the Living", emote: "🤵‍♂️"},
+        dead: {caption:"View the Dead", emote: "🧟‍♂️"}
     };
 
    return (

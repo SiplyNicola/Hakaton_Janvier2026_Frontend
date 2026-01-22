@@ -29,7 +29,7 @@ export default function App() {
         if(cookies.auth) {
             setUser(cookies.auth)
             setView("dashboard");
-        } else {
+        } else if(view !== "register") {
             setView("login");
         }
     })
