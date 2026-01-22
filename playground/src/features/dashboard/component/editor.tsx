@@ -278,53 +278,97 @@ export function Editor({ note, onSave, onOpenNoteById }: { note: Note, onSave: (
     };
 
     // EXPORT PDF (Utilise le CSS amélioré du Fichier 1)
-    const handleExportPDF = () => {
-        const pdfHtml = readConverter.makeHtml(markdownContent);
-        const opt: any = { 
-            margin: 15, 
-            filename: `${title || 'document'}.pdf`, 
-            image: { type: 'jpeg', quality: 0.98 }, 
-            html2canvas: { scale: 2, useCORS: true }, 
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
-        };
-        
-        const element = document.createElement('div');
-        element.innerHTML = `
-            <style>
-                .pdf-container {
-                    font-family: Arial, sans-serif;
-                    color: black !important;
-                    background: white !important;
-                    padding: 20px;
-                    font-size: 12pt;
-                    line-height: 1.5;
-                }
-                .pdf-content, .pdf-content * {
-                    background-color: transparent !important; 
-                    color: black !important;                  
-                    text-shadow: none !important;             
-                }
-                .pdf-content strong { font-weight: bold; }
-                .pdf-content em { font-style: italic; }
-                .pdf-content a, .pdf-content span.internal-note-link {
-                    color: blue !important;
-                    text-decoration: underline !important;
-                }
-                h1.pdf-title {
-                    text-align: center; 
-                    margin-bottom: 30px; 
-                    font-size: 24pt; 
-                    border-bottom: 1px solid #ccc; 
-                    padding-bottom: 10px;
-                }
-            </style>
-            <div class="pdf-container">
-                <h1 class="pdf-title">${title}</h1>
-                <div class="pdf-content">${pdfHtml}</div>
-            </div>
-        `;
-        html2pdf().set(opt).from(element).save();
-    };
+    
+
+// Helper : construit l'URL vers une note selon le mode de router
+const toNoteUrl = (id: string | number | null) => {
+  const mode = import.meta.env.VITE_ROUTER_MODE ?? 'browser'; // 'browser' | 'hash'
+  const base = import.meta.env.VITE_PUBLIC_BASE ?? window.location.origin; // ex: http://localhost:5173
+  if (!id && id !== 0) return base;
+
+  return mode === 'hash'
+    ? `${base}/#/note/${id}`
+    : `${base}/note/${id}`;
+};
+
+const handleExportPDF = () => {
+  // 1) Génère le HTML "lecture" depuis votre markdown (contient encore des <span.internal-note-link>)
+  const htmlForRead = readConverter.makeHtml(markdownContent);
+
+  // 2) Construit un conteneur dédié au rendu PDF
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <style>
+      .pdf-container {
+        font-family: Arial, sans-serif;
+        color: black !important;
+        background: white !important;
+        padding: 20px;
+        font-size: 12pt;
+        line-height: 1.5;
+      }
+      .pdf-content, .pdf-content * {
+        background-color: transparent !important;
+        color: black !important;
+        text-shadow: none !important;
+      }
+      .pdf-content strong { font-weight: bold; }
+      .pdf-content em { font-style: italic; }
+      .pdf-content a, .pdf-content span.internal-note-link {
+        color: blue !important;
+        text-decoration: underline !important;
+      }
+      h1.pdf-title {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 24pt;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
+    </style>
+    <div class="pdf-container">
+      <h1 class="pdf-title">${title ?? ''}</h1>
+      <div class="pdf-content">${htmlForRead}</div>
+    </div>
+  `;
+
+  // 3) Remplace (robustement) les SPAN internes par de vraies ancres cliquables
+  //    On manipule le DOM plutôt que d'utiliser une regex, pour éviter les faux positifs.
+  const pdfContent = wrapper.querySelector('.pdf-content') as HTMLElement;
+  if (pdfContent) {
+    const spans = pdfContent.querySelectorAll('span.internal-note-link[data-note-id]');
+    spans.forEach((span) => {
+      const id = span.getAttribute('data-note-id');
+      const a = document.createElement('a');
+
+      a.href = toNoteUrl(id ?? '');
+      // Si vous préférez ouvrir dans la même fenêtre en prod, mettez target = ''
+      a.target = '_blank';
+      a.rel = 'noopener';
+      // Conserve le contenu (texte + éventuels éléments inline)
+      while (span.firstChild) a.appendChild(span.firstChild);
+      // Remplace le span par l'ancre
+      span.replaceWith(a);
+    });
+  }
+
+  // 4) Paramètres html2pdf : enableLinks => indispensable pour conserver les liens cliquables
+  const opt: any = {
+    margin: 15,
+    filename: `${title || 'document'}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    enableLinks: true, // <-- clé pour produire des annotations PDF de lien
+  };
+
+  // 5) Export
+  html2pdf().set(opt).from(wrapper).save();
+};
+
+
+
+
 
     // Configuration Toolbar (avec Shortcuts du 2ème fichier)
     const modules = {
