@@ -6,17 +6,17 @@ import { useCookies } from 'react-cookie';
 
 
 export default function App() {
-    // État pour savoir quel écran afficher : 'login', 'register' ou 'dashboard'
+    // State to know which screen to display: 'login', 'register', or 'dashboard'
     const [view, setView] = useState<'login' | 'register' | 'dashboard'>('login');
-    // Stockage de l'utilisateur connecté
+    // Storage of the logged-in user
     const [user, setUser] = useState<{ id: number; username: string } | null>(null);
     const [cookies, setCookies, removeCookies] = useCookies(["auth"]);
 
-    // Fonction appelée lors d'une connexion réussie
+    // Function called upon a successful login
     const handleLoginSuccess = (userData: any) => {
         setUser(userData);
         setCookies("auth", userData);
-        setView('dashboard'); // On bascule vers le Dashboard [cite: 63, 65]
+        setView('dashboard'); // Switching to the Dashboard view
     };
 
     const handleLogout = () => {
@@ -36,7 +36,7 @@ export default function App() {
 
     return (
         <div className="app">
-            {/* Rendu conditionnel selon la vue actuelle */}
+            {/* Conditional rendering based on the current view */}
             {view === 'login' && (
                 <LoginComponent 
                     onLoginSuccess={handleLoginSuccess} 

@@ -8,10 +8,10 @@ import "./editor.css";
 
 // @ts-ignore
 import MarkdownShortcuts from 'quill-markdown-shortcuts';
-// Enregistrement du module Markdown (Logique du 2ème fichier)
+// Recording the Markdown module (Logic of the 2nd file)
 Quill.register('modules/markdownShortcuts', MarkdownShortcuts);
 
-// --- 1. EXTENSION : LIENS INTERNES (Logique "Bis" - SPAN) ---
+// --- 1. EXTENSION: INTERNAL LINKS  ---
 const internalLinkExtension = function () {
     return [{
         type: 'lang',
@@ -28,7 +28,7 @@ const internalLinkExtension = function () {
     }];
 };
 
-// --- 2. CONFIGURATION DES CONVERTISSEURS (Logique "Bis") ---
+// --- 2. CONFIGURATION OF CONVERTERS ("Bis" Logic) ---
 
 // Pour la LECTURE (Transforme [[...]] en <span> cliquable)
 const readConverter = new Showdown.Converter({

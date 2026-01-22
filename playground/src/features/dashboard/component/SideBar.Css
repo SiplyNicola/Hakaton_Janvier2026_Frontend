@@ -81,7 +81,7 @@
     box-shadow: 0 0 10px rgba(255, 137, 6, 0.2);
 }
 
-/* Le message quand rien n'est trouvé */
+/* The message when nothing is found */
 .empty-search {
     padding: 20px;
     text-align: center;

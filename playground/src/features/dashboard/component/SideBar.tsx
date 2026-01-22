@@ -24,7 +24,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
         const title = prompt("Title of the new parchment (note) :");
         if (title === null) return; 
         
-        // Si vide, on met "Untitled Parchment" par défaut
+        // If empty, default to "Untitled Parchment"
         const finalTitle = title.trim() || "Untitled Parchment";
 
         await noteService.create({
@@ -50,7 +50,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
         <div className="sidebar-header">
             <h3>🎃 {user.username}'s Scriptorium</h3>
             
-            {/* BARRE DE RECHERCHE */}
+            {/* SEARCH BAR */}
             <div className="search-bar-container" style={{marginBottom: '10px', padding: '0 5px'}}>
                 <input 
                     type="text" 
@@ -74,11 +74,11 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
         </div>
         
         <nav className="tree-navigation">
-            {/* LOGIQUE D'AFFICHAGE */}
+            {/* DISPLAY LOGIC */}
             
             {searchQuery && searchResults ? (
                 <div className="search-results">
-                    {/* 1. On affiche d'abord les dossiers trouvés (sans titre) */}
+                    {/* 1. First, we display the folders found (without title) */}
                     {searchResults.folders.map((folder: any) => (
                         <TreeItem 
                             key={`search-f-${folder.id}`} 
@@ -90,7 +90,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                         />
                     ))}
 
-                    {/* 2. On affiche ensuite les notes trouvées (sans titre) */}
+                    {/* 2. Next, we display the notes found (without title) */}
                     {searchResults.notes.map((note: any) => (
                         <TreeItem 
                             key={`search-n-${note.id}`} 
@@ -101,7 +101,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                         />
                     ))}
 
-                    {/* 3. Message unique si ABSOLUMENT RIEN n'est trouvé */}
+                    {/* 3. Single message if ABSOLUTELY NOTHING is found */}
                     {searchResults.folders.length === 0 && searchResults.notes.length === 0 && (
                         <div className="empty-search">
                             Only cobwebs linger here... 🕸️
@@ -109,7 +109,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                     )}
                 </div>
             ) : (
-                // --- AFFICHAGE NORMAL (ARBRE COMPLET) ---
+                // --- NORMAL DISPLAY (FULL TREE) ---
                 <>
                     {data?.folders?.map((folder: any) => (
                         <TreeItem 

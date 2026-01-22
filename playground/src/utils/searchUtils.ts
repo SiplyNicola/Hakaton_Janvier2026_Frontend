@@ -1,22 +1,21 @@
-// src/utils/searchUtils.ts
 import fuzzysort from "fuzzysort";
 
-// Fonction récursive pour récupérer TOUS les dossiers et notes à plat
+// Recursive function to retrieve ALL folders and notes in a flat structure
 const flattenData = (folders: any[], notes: any[]) => {
     let allFolders: any[] = [];
-    let allNotes: any[] = [...notes]; // On commence avec les notes racine
+    let allNotes: any[] = [...notes]; // We start with the base notes
 
     const traverse = (currentFolders: any[]) => {
         for (const folder of currentFolders) {
-            // 1. On ajoute le dossier actuel
+            // 1. Add the current folder
             allFolders.push(folder);
 
-            // 2. On ajoute ses notes
+           // 2. We add his/her grades
             if (folder.notes && folder.notes.length > 0) {
                 allNotes = [...allNotes, ...folder.notes];
             }
 
-            // 3. On descend dans les sous-dossiers (récursion)
+            // 3. We go down into the subfolders (recursion)
             if (folder.subFolders && folder.subFolders.length > 0) {
                 traverse(folder.subFolders);
             }
@@ -31,23 +30,22 @@ const flattenData = (folders: any[], notes: any[]) => {
 export function searchGrimoire(query: string, rootData: any) {
     if (!query || !query.trim()) return null;
 
-    // 1. On met tout à plat
+    
     const { allFolders, allNotes } = flattenData(rootData.folders || [], rootData.notes || []);
 
-    // 2. Configuration Fuzzysort
+    // 2. Fuzzysort Configuration
     const options = {
-        threshold: -10000, // Seuil de tolérance
-        limit: 20,         // Limite de résultats
+        threshold: -10000, // Tolerance threshold
+        limit: 20,         // Result limit
     };
 
-    // 3. Recherche dans les dossiers (par nom)
+    // 3. Search in folders (by name)
     const folderResults = fuzzysort.go(query, allFolders, {
         ...options,
         key: 'name',
     });
 
-    // 4. Recherche dans les notes (par titre)
-    // Note: Tu peux ajouter content_markdown dans les keys si tu veux chercher dans le contenu aussi
+    // 4. Search in notes (by title)
     const noteResults = fuzzysort.go(query, allNotes, {
         ...options,
         key: 'title', 

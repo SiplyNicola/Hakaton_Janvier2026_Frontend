@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const register: (command: RegisterCommand) => Promise<RegisterResponse> = async (command: RegisterCommand) => {
     
-    // envoie une requete POST /users
+    // sends a POST request to /users
     const response = await fetch(`${API_URL}/api/users`, {
         method: "POST",
         headers: {
@@ -22,7 +22,7 @@ export const register: (command: RegisterCommand) => Promise<RegisterResponse> =
 
     return await response.json();
 }
-//envoie requete post /login
+//send POST request /login
 export const login: (command: LoginCommand) => Promise<LoginResponse> = async (command: LoginCommand) => {
     
     const response = await fetch(`${API_URL}/api/login`, {

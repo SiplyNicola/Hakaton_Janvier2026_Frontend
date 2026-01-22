@@ -131,15 +131,15 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
     if (type === "note") {
         return (
             <div className="tree-item-row note" onClick={() => onSelectNote(item.id)}>
-                {/* 1. On sépare l'icône */}
+                {/* 1. We separate the icon */}
                 <span style={{ marginRight: '5px', backgroundColor: 'transparent' }}>📜</span>
                 
-                {/* 2. On met le titre dans son propre span avec la classe CSS spéciale */}
+                {/* 2. We put the title in its own span with the special CSS class */}
                 <span className="tree-item-title" title={item.title}>
                     {item.title || "Untitled Parchment"}
                 </span>
 
-                {/* Les boutons sont maintenant en position: absolute grâce au CSS */}
+                {/* The buttons are now in absolute position thanks to CSS */}
                 <div className="item-actions">
                     { fromTrash ? 
                         <>
@@ -161,10 +161,10 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
     return (
         <div className="tree-folder">
             <div className="tree-item-row folder" onClick={() => setIsOpen(!isOpen)}>
-                {/* 1. On sépare l'icône */}
+                {/* 1. We separate the icon */}
                 <span style={{ marginRight: '5px', backgroundColor: 'transparent' }}>{isOpen ? '📂' : '📁'}</span>
                 
-                {/* 2. On met le nom dans son propre span avec la classe CSS spéciale */}
+                {/* 2. We put the name in its own span with the special CSS class */}
                 <span className="tree-item-title" title={item.name}>
                     {item.name || "Untitled Grimoir"}
                 </span>

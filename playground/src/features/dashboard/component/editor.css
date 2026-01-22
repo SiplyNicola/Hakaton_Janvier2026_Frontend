@@ -152,7 +152,7 @@
     word-break: break-word; 
     white-space: pre-wrap;
 }
-/* Ajouts pour le layout de l'éditeur */
+
 .quill-wrapper-write {
     height: 100%;
     display: flex;
