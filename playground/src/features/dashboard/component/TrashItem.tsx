@@ -23,7 +23,6 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
                     onRefresh={onRefreshSidebar}
                     user={user}
                     fromTrash={true}
-                    isRoot={!folder.parentId}
                 />
             ))}
             {trashData?.notes?.map((note: any) => (
@@ -34,7 +33,6 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
                     onSelectNote={onSelectNote}
                     onRefresh={onRefreshSidebar}
                     fromTrash={true}
-                    isRoot={false}
                 />
             ))}
             </div>

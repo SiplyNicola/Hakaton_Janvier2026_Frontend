@@ -62,7 +62,7 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
             </div>
 
             <div className="quick-actions">
-                <button title="New grimoir" onClick={addRootFolder}>📘+</button>
+                <button title="New grimoir" onClick={addRootFolder}>📁+</button>
                 <button title="New parchment" onClick={addRootNote}>📜+</button>
                 <button 
                     title={buttonView[trashStatus ? "living" : "dead"].caption} 
@@ -87,7 +87,6 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                             onSelectNote={onSelectNote}
                             onRefresh={onRefresh}
                             user={user}
-                            isRoot={!folder.parentId}
                         />
                     ))}
 
@@ -99,7 +98,6 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                             type="note" 
                             onSelectNote={onSelectNote}
                             onRefresh={onRefresh}
-                            isRoot={false}
                         />
                     ))}
 
@@ -121,7 +119,6 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                             onSelectNote={onSelectNote}
                             onRefresh={onRefresh}
                             user={user}
-                            isRoot={true}
                         />
                     ))}
                     {data?.notes?.map((note: any) => (
@@ -131,7 +128,6 @@ export function Sidebar({ data, onSelectNote, onTrashStatus, trashStatus, onRefr
                             type="note" 
                             onSelectNote={onSelectNote}
                             onRefresh={onRefresh}
-                            isRoot={false} 
                         />
                     ))}
                 </>

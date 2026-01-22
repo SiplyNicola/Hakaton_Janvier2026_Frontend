@@ -5,13 +5,13 @@ import { saveAs } from 'file-saver';
 import "./TreeItem.css";
 
 
-export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fromTrash, isRoot }: any) {
+export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fromTrash }: any) {
     const [isOpen, setIsOpen] = useState(false);
     const [isZipping, setIsZipping] = useState(false);
 
     const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm(`Are you sure about sending this ${type === 'note' ? 'parchment' : isRoot ? 'grimoir' : 'folio'} to the graveyard?`)) return;
+        if (!confirm(`Are you sure about sending this ${type === 'note' ? 'parchment' :'grimoir'} to the graveyard?`)) return;
         
         if (type === "note") await noteService.trash(item.id);
         else await folderService.trash(item.id);
@@ -20,7 +20,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
 
     const handleRestore = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if(!confirm(`Do you want to restore this ${type === 'note' ? 'parchement' : isRoot ? 'grimoir' : 'folio'}?`)) return;
+        if(!confirm(`Do you want to restore this ${type === 'note' ? 'parchement' : 'grimoir'}?`)) return;
 
         if(type === "note") await noteService.restore(item.id);
         else await folderService.restore(item.id);
@@ -29,7 +29,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
 
     const handleDeleteDefinitely = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if(!confirm(`Do you want to delete definitely this ${type === 'note' ? 'parchement' : isRoot ? 'grimoir' : 'folio'}?`)) return;
+        if(!confirm(`Do you want to delete definitely this ${type === 'note' ? 'parchement' : 'grimoir'}?`)) return;
 
         if(type === "note") await noteService.delete(item.id);
         else await folderService.delete(item.id);
@@ -51,11 +51,11 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
 
     const handleAddSubItem = async (e: React.MouseEvent, subType: 'note' | 'folder') => {
         e.stopPropagation();
-        const raw = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'folio'} to add:`);
+        const raw = prompt(`Name of the ${subType === 'note' ? 'parchment' : 'grimoir'} to add:`);
        
         if (raw === null) return; 
 
-        const name = raw.trim() || (subType === 'note' ? "Untitled Parchment" : "New Folio");
+        const name = raw.trim() || (subType === 'note' ? "Untitled Parchment" : "New Grimoir");
 
         if (subType === 'note') {
             await noteService.create({ title: name, content_markdown: "", owner_id: user.id, folder_id: item.id });
@@ -128,7 +128,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
             <div className="tree-item-row folder" onClick={() => setIsOpen(!isOpen)}>
                 {/* 1. We separate the icon */}
                 <span style={{ marginRight: '5px', backgroundColor: 'transparent' }}>
-                    {isRoot && isOpen ? "📖" : isRoot ? "📘" : isOpen ? '📂' : '📁'}
+                    {isOpen ? '📂' : '📁'}
                 </span>
                 
                 {/* 2. We put the name in its own span with the special CSS class */}
@@ -147,7 +147,7 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
                             <button onClick={handleExportZip} title={`Download ZIP Archive for ${item.name}`}>
                                 {isZipping ? '⏳' : '📦'}
                             </button>
-                            <button title={`Add folio to ${item.name}`} onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
+                            <button title={`Add grimoir to ${item.name}`} onClick={(e) => handleAddSubItem(e, 'folder')}>📁+</button>
                             <button title={`Add parchment to ${item.name}`} onClick={(e) => handleAddSubItem(e, 'note')}>📜+</button>
                             <button title={`Re-Inscribe ${item.name}`} onClick={handleRename}>✏️</button>
                             <button title={`Send ${item.name} to the Graveyard`} onClick={handleDelete}>🗑️</button>
