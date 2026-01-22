@@ -1,89 +1,76 @@
 
-// double click logic
+const MARKDOWN_STYLES: Record<string, string> = {
+    'STRONG': '**', 
+    'B': '**',      
+    'EM': '*',      
+    'I': '*',      
+    'S': '~~',      
+    'STRIKE': '~~'  
+};
+
+//double click 
 export const applyReverseMarkdown = (editor: any) => {
-    const range = editor.getSelection();
+    //get cursor selection
+    let range = editor.getSelection();
     if (!range) return;
 
-    const leafResult = editor.getLeaf(range.index);
-    if (!leafResult) return;
-    const [leaf] = leafResult;
-    if (!leaf || !leaf.parent) return;
+    //find exact element click
+    let leafResult = editor.getLeaf(range.index);
+    if (!leafResult || !leafResult[0]) return;
+    
+    let leaf = leafResult[0];  //text itself     
+    let parent = leaf.parent;       
+    let tagName = parent.domNode.tagName; 
 
-    const parentBlot = leaf.parent;
-    const parentTag = parentBlot.domNode.tagName; 
+    //check if tag in styles
+    let symbol = MARKDOWN_STYLES[tagName]; 
 
-    // Helper for Inline (Bold, etc.)
-    const transformInlineToMd = (tag: string, formatName: string) => {
-        const blotIndex = editor.getIndex(parentBlot);
-        const blotLength = parentBlot.length();
-        const text = parentBlot.domNode.innerText || parentBlot.domNode.textContent;
+    if (symbol) {
+        let index = editor.getIndex(parent);   
+        let length = parent.length();          
+        //remove formatting
+        editor.formatText(index, length, parent.statics.blotName, false);
+        //insert markdown symbols
+        editor.insertText(index + length, symbol); 
+        editor.insertText(index, symbol);   
+        //reset cursor position       
+        setTimeout(() => editor.setSelection(index + symbol.length, length), 0);
+        return; 
+    }
 
-        if (text.startsWith(tag) && text.endsWith(tag)) return;
+    if (tagName === 'H1' || tagName === 'H2') {
+        let lineIndex = editor.getIndex(parent); 
+    
+        let prefix = ''; 
+        if (tagName === 'H1') {
+            prefix = '# ';
+        } else {
+            prefix = '## ';
+        }
 
-        editor.formatText(blotIndex, blotLength, formatName, false);
-        editor.insertText(blotIndex + blotLength, tag);
-        editor.insertText(blotIndex, tag);
-        setTimeout(() => editor.setSelection(blotIndex + tag.length, blotLength), 0);
-    };
-
-    // Helper for Titles (H1, H2)
-    const transformHeaderToMd = (level: number) => {
-        const lineResult = editor.getLine(range.index);
-        if (!lineResult) return;
-        const [line] = lineResult;
-        if (!line) return;
-
-        const lineIndex = editor.getIndex(line);
-        const prefix = level === 1 ? '# ' : '## ';
-        const text = line.domNode.innerText;
-
-        if (text.startsWith(prefix)) return;
+        if (parent.domNode.innerText.startsWith(prefix)) return;
 
         editor.formatLine(lineIndex, 1, 'header', false);
         editor.insertText(lineIndex, prefix);
-        setTimeout(() => editor.setSelection(range.index + prefix.length), 0);
-    };
-
-    // Logic Dispatch
-    if (parentTag === 'STRONG' || parentTag === 'B') transformInlineToMd("**", "bold");
-    else if (parentTag === 'EM' || parentTag === 'I') transformInlineToMd("*", "italic");
-    else if (parentTag === 'S' || parentTag === 'STRIKE') transformInlineToMd("~~", "strike");
-    else if (parentTag === 'U') {
-        const blotIndex = editor.getIndex(parentBlot);
-        const blotLength = parentBlot.length();
-        const text = parentBlot.domNode.innerText;
-        if (text.startsWith('<u>')) return;
-        editor.formatText(blotIndex, blotLength, 'underline', false);
-        editor.insertText(blotIndex + blotLength, '</u>');
-        editor.insertText(blotIndex, '<u>');
-        setTimeout(() => editor.setSelection(blotIndex + 3, blotLength), 0);
+        return;
     }
-    else if (parentTag === 'H1') transformHeaderToMd(1);
-    else if (parentTag === 'H2') transformHeaderToMd(2);
+
 };
 
-// --- 2. LIVE MARKDOWN (Typing Logic) ---
 export const checkLiveMarkdown = (editor: any) => {
-    const selection = editor.getSelection();
-    if (!selection) return;
-    
-    // Safety check if leaf exists
-    const leafResult = editor.getLeaf(selection.index - 1);
-    if (!leafResult) return;
-    const [leaf] = leafResult;
-    if (!leaf || !leaf.text) return;
+    let range = editor.getSelection();
+    if (!range) return;
+    // get the current line text up to the cursor
+    let [line, offset] = editor.getLine(range.index);
+    let textUntilCursor = line.domNode.textContent.substring(0, offset);
 
-    const [line, offset] = editor.getLine(selection.index);
-    const textUntilCursor = line.domNode.innerText.substring(0, offset);
-
+    // Check for markdown patterns
     if (textUntilCursor === '# ') {
-        editor.formatLine(selection.index, 1, 'header', 1);
-        editor.deleteText(selection.index - 2, 2);
-        return;
-    }
-    if (textUntilCursor === '## ') {
-        editor.formatLine(selection.index, 1, 'header', 2);
-        editor.deleteText(selection.index - 3, 3);
-        return;
+        editor.formatLine(range.index, 1, 'header', 1);
+        editor.deleteText(range.index - 2, 2);
+    } 
+    else if (textUntilCursor === '## ') {
+        editor.formatLine(range.index, 1, 'header', 2);
+        editor.deleteText(range.index - 3, 3);
     }
 };
