@@ -49,7 +49,6 @@ body, html {
   overflow: hidden;
   margin: auto;
   text-align: center;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -58,44 +57,37 @@ body, html {
 .empty-bg {
   position: absolute;
   inset: 0;
-
-  background-image: url("../../../assets/halloween-bg.jpg");
+  background-image: url("../../../assets/spooky-jack.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 
-  filter: blur(2px);
-  transform: scale(1.02);
+
 }
 
-@keyframes flickerAnimation {
-    0%, 100% { opacity: 10; text-shadow: 0 0 20px var(--text-white); }
-    75% { opacity: 0.3; }
-}
+
 /* Irregular glow-only flicker */
 @keyframes glowFlicker {
-    0%   { text-shadow: 0 0 2px rgba(255,255,255,0.2), 0 0 6px rgba(255,255,255,0.25), 0 0 12px rgba(255,255,255,0.15); }
-    5%   { text-shadow: 0 0 1px rgba(255,255,255,0.15), 0 0 3px rgba(255,255,255,0.2),  0 0 6px  rgba(255,255,255,0.1); }
-    12%  { text-shadow: 0 0 8px rgba(255,255,255,0.6),  0 0 16px rgba(255,255,255,0.45), 0 0 28px rgba(255,255,255,0.3); }
+    /* 0%   { text-shadow: 0 0 2px rgba(255,255,255,0.2), 0 0 6px rgba(255,255,255,0.25), 0 0 12px rgba(255,255,255,0.15); }
+    5%   { text-shadow: 0 0 1px rgba(255,255,255,0.15), 0 0 3px rgba(255,255,255,0.2),  0 0 6px  rgba(255,255,255,0.1); } */
+    /* 12%  { text-shadow: 0 0 8px rgba(255,255,255,0.6),  0 0 16px rgba(255,255,255,0.45), 0 0 28px rgba(255,255,255,0.3); }
     22%  { text-shadow: 0 0 3px rgba(255,255,255,0.3),  0 0 8px  rgba(255,255,255,0.25), 0 0 14px rgba(255,255,255,0.18); }
     37%  { text-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 22px rgba(255,255,255,0.5),  0 0 36px rgba(255,255,255,0.35); }
     55%  { text-shadow: 0 0 4px rgba(255,255,255,0.25), 0 0 10px rgba(255,255,255,0.2),  0 0 18px rgba(255,255,255,0.15); }
-    78%  { text-shadow: 0 0 9px rgba(255,255,255,0.65), 0 0 20px rgba(255,255,255,0.45), 0 0 32px rgba(255,255,255,0.3); }
-    100% { text-shadow: 0 0 6px rgba(255,255,255,0.4),  0 0 14px rgba(255,255,255,0.3),  0 0 26px rgba(255,255,255,0.25); }
+    78%  { text-shadow: 0 0 9px rgba(255,255,255,0.65), 0 0 20px rgba(255,255,255,0.45), 0 0 32px rgba(255,255,255,0.3); } */
+    100% { text-shadow: 0 0 6px rgba(233, 121, 10, 0.932),  0 0 14px rgba(227, 118, 8, 0.894),  0 0 26px rgba(230, 131, 11, 0.86); }
 }
 
 
 .flicker {
     background-color: transparent;
     font-family: "Creepster", cursive;
-    color: var(--bg-dark);
-    font-size: 3rem;
+    color: rgb(213, 203, 203);
+    font-size: 4rem;
     position: relative;
-    top: -50px;   /* negative moves it UP */
-    
-    /* only the shadow animates */
-    animation: glowFlicker 2.8s infinite;
-    will-change: text-shadow;     /* perf hint */
+    top: -50px;   
+    animation: glowFlicker 2s infinite;
+    /* will-change: text-shadow;     perf hint */
 }
 
 
