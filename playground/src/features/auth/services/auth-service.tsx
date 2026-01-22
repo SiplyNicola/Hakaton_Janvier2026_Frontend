@@ -17,7 +17,7 @@ export const register: (command: RegisterCommand) => Promise<RegisterResponse> =
     });
 
     if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: Impossible de s'inscrire`);
+        throw new Error(`Erreur ${response.status}: Unable to register`);
     }
 
     return await response.json();
@@ -34,7 +34,7 @@ export const login: (command: LoginCommand) => Promise<LoginResponse> = async (c
     });
 
     if (!response.ok) {
-        throw new Error(`Erreur ${response.status}: Echec connexion`);
+        throw new Error(`Erreur ${response.status}: Connection failure`);
     }
 
     return await response.json();

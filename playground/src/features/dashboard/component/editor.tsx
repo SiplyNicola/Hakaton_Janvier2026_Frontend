@@ -306,7 +306,7 @@ const toNoteUrl = (id: string | number | null) => {
                     className="note-title" 
                     value={title} 
                     onChange={(e) => setTitle(e.target.value)} 
-                    placeholder="Titre de la note..." 
+                    placeholder="Note Title..." 
                 />
                 <div className="mode-toggle">
                     <button onClick={() => handleSwitchMode('write')} className={mode === 'write' ? 'active' : ''}>Unleashed</button>
