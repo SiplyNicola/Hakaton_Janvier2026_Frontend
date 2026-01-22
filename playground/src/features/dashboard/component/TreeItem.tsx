@@ -13,9 +13,6 @@ export default function TreeItem({ item, type, onSelectNote, onRefresh, user, fr
         e.stopPropagation();
         if (!confirm(`Do you want to send this ${type === 'note' ? 'parchment' : 'grimoir'} to the grave?`)) return;
         
-        /*if (type === "note") await noteService.delete(item.id);
-        else await folderService.delete(item.id);*/
-        console.log("Trashing item:", item, "of type:", type);
         if (type === "note") await noteService.trash(item.id);
         else await folderService.trash(item.id);
         onRefresh();

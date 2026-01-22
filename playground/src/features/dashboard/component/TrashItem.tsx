@@ -6,6 +6,13 @@ export default function TrashItem({ user, trashData, onSelectNote, onRefreshSide
             <div className="trash-header">
                 <h2 className="graveyard-title">Graveyard</h2>
             </div>
+            {
+                trashData?.folders.length === 0 && trashData?.notes.length === 0 && (
+                    <div className="empty-trash">
+                        The graveyard is silent... 🪦
+                    </div>
+                )
+            }
             {trashData?.folders?.map((folder: any) => (
                 <TreeItem 
                     key={`f-${folder.id}`} 

@@ -320,9 +320,9 @@ const toNoteUrl = (id: string | number | null) => {
                     <button onClick={() => handleSwitchMode('read')} className={mode === 'read' ? 'active' : ''}>Sealed</button>
                     <button className="save-btn" onClick={() => onSave({...note, title, content_markdown: markdownContent})}>Commit to Ink</button>
                     <button 
+                        className='export-pdf'
                         onClick={handleExportPDF} 
                         title="Export to PDF"
-                        style={{ fontSize: '1.2rem', padding: '5px 10px', marginLeft: '10px' }}
                     >
                         Export to PDF
                     </button>

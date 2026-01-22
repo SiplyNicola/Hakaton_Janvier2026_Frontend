@@ -68,6 +68,21 @@
     color: white;
 }
 
+.export-pdf {
+    background: var(--spooky-purple);
+    color: #000;
+    font-family: 'Creepster', cursive;
+    font-size: 1.2rem;
+    transition: 0.3s;
+    margin-left: 10px;
+}
+
+.export-pdf:hover {
+    transform: scale(1.02);
+    color: var(--spooky-purple);
+    box-shadow:0 0 15px var(--spooky-purple) ;
+}
+
 .save-btn {
     background: var(--accent-orange);
     color: #000;
