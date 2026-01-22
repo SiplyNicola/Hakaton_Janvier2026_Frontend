@@ -27,6 +27,7 @@ export function LoginComponent({ onLoginSuccess, onSwitchToRegister }: LoginProp
 
     return (
         <section className="mainPage">
+            
             <h2>Login</h2>
             <form className="formStyle" onSubmit={handleSubmit}>
                 <label>

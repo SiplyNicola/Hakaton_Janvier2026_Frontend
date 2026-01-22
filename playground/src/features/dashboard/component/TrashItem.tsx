@@ -2,7 +2,10 @@ import TreeItem from "./TreeItem";
 
 export default function TrashItem({ user, trashData, onSelectNote, onRefreshSidebar }: any) {
     return (
-        <div>
+        <div className="trash-container">
+            <div className="trash-header">
+                <h2>Trash</h2>
+            </div>
             {trashData?.folders?.map((folder: any) => (
                 <TreeItem 
                     key={`f-${folder.id}`} 

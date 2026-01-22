@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Inter:wght@400;700&display=swap');
+
 :root {
     --bg-dark: #0a0a0c;
     --sidebar-bg: rgba(18, 18, 20, 0.9);
@@ -7,11 +9,35 @@
     --text-white: #f8f8f2;
 }
 
-.tree-item-row {
-    position: static; 
-    
-    height: auto;
+.trash-container {
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+}
 
+.trash-header {
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--spooky-purple);
+    /* background: rgba(0, 0, 0, 0.4);  */
+    background-image: url("../../../assets/haunted-house.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+h2 {
+    font-family: 'Creepster', cursive;
+    font-size: 3rem;
+    color: var(--accent-orange);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    margin-bottom: 20px;
+    background-color: transparent;
+}
+
+
+.tree-item-row {
+    height: auto;
     display: flex;
     justify-content: flex-start; 
     align-items: center;
@@ -20,18 +46,14 @@
     border-radius: 8px;
     cursor: pointer;
     transition: 0.2s;
-    
     /*overflow: hidden;*/
     z-index: 1;
     
 }
-
-/*.tree-item-row:hover {
-    background: rgba(255, 137, 6, 0.1);
-}*/
-
+.tree-item-row:hover {
+    background-color: rgba(127, 90, 240, 0.1);
+}
 .tree-item-title {
-    flex: 1;               
     white-space: nowrap;    
     /*overflow: hidden;*/
     text-overflow: ellipsis;
@@ -39,7 +61,9 @@
     background-color: transparent !important;
     position: relative; 
     z-index: 2;
+
 }
+
 
 .item-actions {
     flex: 2;
