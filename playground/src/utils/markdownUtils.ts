@@ -2,8 +2,8 @@
 const MARKDOWN_STYLES: Record<string, string> = {
     'STRONG': '**', 
     'B': '**',      
-    'EM': '*',      
-    'I': '*',      
+    'EM': '_',      
+    'I': '_',      
     'S': '~~',      
     'STRIKE': '~~'  
 };
